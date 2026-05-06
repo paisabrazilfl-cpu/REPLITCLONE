@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Replit Clone</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Replit Clone v3</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Courier New',monospace;background:#0e1117;color:#e2e8f0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -20,22 +20,23 @@ body{font-family:'Courier New',monospace;background:#0e1117;color:#e2e8f0;height
 .workspace{display:flex;flex:1;overflow:hidden}
 .sidebar{width:220px;background:#161b22;border-right:1px solid #30363d;display:flex;flex-direction:column;flex-shrink:0}
 .sidebar-header{padding:8px 12px;font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #30363d;display:flex;justify-content:space-between;align-items:center}
-.icon-btn{background:none;border:none;color:#58a6ff;cursor:pointer;font-size:16px;padding:2px 4px;border-radius:4px}
+.icon-btn{background:none;border:none;color:#58a6ff;cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px}
 .icon-btn:hover{background:#21262d}
 .file-tree{flex:1;overflow-y:auto;padding:4px 0}
 .file-item{display:flex;align-items:center;gap:8px;padding:5px 12px;cursor:pointer;font-size:13px;color:#8b949e;border-left:2px solid transparent}
 .file-item:hover{background:#21262d;color:#c9d1d9}
 .file-item.active{background:#1f6feb22;color:#58a6ff;border-left-color:#58a6ff}
-.file-delete{margin-left:auto;opacity:0;font-size:13px;color:#f85149;padding:0 4px}
+.file-delete{margin-left:auto;opacity:0;font-size:12px;color:#f85149;padding:0 4px}
 .file-item:hover .file-delete{opacity:1}
-.pkg-section{border-top:1px solid #30363d;padding:8px 12px}
-.pkg-header{font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.pkg-section{border-top:1px solid #30363d;padding:8px 12px;flex-shrink:0}
+.pkg-header{font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.pkg-badge{font-size:9px;background:#1f6feb;color:#fff;border-radius:3px;padding:1px 5px;font-weight:normal;text-transform:none;letter-spacing:0}
 .pkg-input-row{display:flex;gap:4px}
 .pkg-input{flex:1;background:#21262d;border:1px solid #30363d;color:#e2e8f0;border-radius:4px;padding:4px 6px;font-size:11px;outline:none;font-family:inherit}
-.pkg-btn{background:#1f6feb;border:none;color:#fff;border-radius:4px;padding:4px 8px;font-size:11px;cursor:pointer}
-.pkg-list{margin-top:6px;display:flex;flex-direction:column;gap:3px}
-.pkg-tag{font-size:11px;color:#58a6ff;background:#1f6feb22;padding:2px 8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center}
-.pkg-remove{color:#f85149;cursor:pointer;font-size:12px}
+.pkg-btn{background:#1f6feb;border:none;color:#fff;border-radius:4px;padding:4px 8px;font-size:11px;cursor:pointer;font-weight:700}
+.pkg-list{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;max-height:80px;overflow-y:auto}
+.pkg-tag{font-size:11px;color:#58a6ff;background:#1f6feb22;padding:2px 8px;border-radius:10px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.pkg-remove{color:#f85149;cursor:pointer;font-size:12px;line-height:1}
 .editor-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .tabs{display:flex;align-items:center;background:#161b22;border-bottom:1px solid #30363d;flex-shrink:0;overflow-x:auto}
 .tab{display:flex;align-items:center;gap:6px;padding:7px 14px;font-size:12px;color:#8b949e;cursor:pointer;border-right:1px solid #30363d;white-space:nowrap;border-bottom:2px solid transparent;flex-shrink:0}
@@ -43,461 +44,998 @@ body{font-family:'Courier New',monospace;background:#0e1117;color:#e2e8f0;height
 .tab.active{color:#c9d1d9;background:#0d1117;border-bottom-color:#f97316}
 .tab-close{margin-left:4px;opacity:0.4;font-size:14px}
 .tab-close:hover{opacity:1}
-.editor-wrapper{flex:1;position:relative;overflow:hidden;display:flex}
-.line-numbers{width:50px;background:#0d1117;color:#484f58;font-size:13px;line-height:1.6;padding:16px 8px;text-align:right;user-select:none;overflow:hidden;flex-shrink:0;border-right:1px solid #21262d;font-family:'Courier New',monospace}
+.editor-wrapper{flex:1;display:flex;overflow:hidden}
+.line-numbers{width:48px;background:#0d1117;color:#484f58;font-size:13px;line-height:1.6;padding:16px 8px;text-align:right;user-select:none;overflow:hidden;flex-shrink:0;border-right:1px solid #21262d;font-family:'Courier New',monospace}
 .code-editor{flex:1;background:#0d1117;color:#e2e8f0;border:none;outline:none;font-family:'Courier New',monospace;font-size:13px;line-height:1.6;padding:16px;resize:none;tab-size:2;overflow-y:auto;caret-color:#f97316}
 .output-panel{height:220px;border-top:1px solid #30363d;display:flex;flex-direction:column;flex-shrink:0}
-.output-tabs{display:flex;align-items:center;background:#161b22;border-bottom:1px solid #30363d;flex-shrink:0}
-.output-tab{padding:6px 16px;font-size:12px;color:#8b949e;cursor:pointer;border-bottom:2px solid transparent}
+.output-tabs{display:flex;align-items:center;background:#161b22;border-bottom:1px solid #30363d;flex-shrink:0;gap:0}
+.output-tab{padding:6px 14px;font-size:12px;color:#8b949e;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
 .output-tab.active{color:#c9d1d9;border-bottom-color:#f97316}
-.output-content{flex:1;background:#0d1117;padding:10px 14px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;overflow-y:auto;color:#3fb950}
-.output-content .err{color:#f85149}
-.output-content .info{color:#58a6ff}
-.output-content .warn{color:#d29922}
-.output-content .prompt{color:#8b949e}
-.output-content .sys{color:#a371f7}
-.terminal-wrap{flex:1;background:#0d1117;display:flex;flex-direction:column;overflow:hidden}
-.terminal-output{flex:1;padding:10px 14px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;overflow-y:auto;color:#e2e8f0}
-.terminal-input-row{display:flex;align-items:center;padding:6px 14px;border-top:1px solid #21262d;gap:6px}
-.terminal-prompt-label{color:#3fb950;font-size:12px;white-space:nowrap}
-.terminal-input{flex:1;background:transparent;border:none;outline:none;color:#e2e8f0;font-family:'Courier New',monospace;font-size:12px}
+.out-pane{flex:1;overflow-y:auto;display:none}
+.out-pane.active{display:flex;flex-direction:column}
+.console-out{background:#0d1117;padding:10px 14px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;flex:1;overflow-y:auto;color:#3fb950}
+.console-out .err{color:#f85149}
+.console-out .info{color:#58a6ff}
+.console-out .warn{color:#d29922}
+.console-out .prompt{color:#8b949e}
+.console-out .sys{color:#a371f7}
+.terminal-wrap{background:#0d1117;flex:1;display:flex;flex-direction:column;overflow:hidden}
+.terminal-out{flex:1;padding:10px 14px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;overflow-y:auto;color:#e2e8f0}
+.terminal-row{display:flex;align-items:center;padding:5px 14px;border-top:1px solid #21262d;gap:6px;flex-shrink:0}
+.t-prompt{color:#3fb950;font-size:12px;white-space:nowrap}
+.t-input{flex:1;background:transparent;border:none;outline:none;color:#e2e8f0;font-family:'Courier New',monospace;font-size:12px}
+.webview-wrap{flex:1;background:#fff;overflow:hidden}
+.webview-wrap iframe{width:100%;height:100%;border:none}
 .ai-panel{width:0;background:#161b22;border-left:1px solid #30363d;transition:width 0.2s;overflow:hidden;display:flex;flex-direction:column}
 .ai-panel.open{width:280px}
-.ai-header{padding:10px 12px;font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #30363d}
-.ai-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.ai-header{padding:10px 12px;font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #30363d;display:flex;justify-content:space-between;align-items:center}
+.ai-clear{font-size:11px;color:#8b949e;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:normal;padding:2px 6px;border-radius:3px}
+.ai-clear:hover{background:#21262d;color:#c9d1d9}
+.ai-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
 .ai-msg{font-size:12px;line-height:1.5;padding:8px 10px;border-radius:6px;white-space:pre-wrap;word-break:break-word}
-.ai-msg.user{background:#1f6feb33;color:#58a6ff;align-self:flex-end;max-width:90%}
-.ai-msg.assistant{background:#21262d;color:#c9d1d9;align-self:flex-start;max-width:90%}
-.ai-input-row{display:flex;gap:6px;padding:10px 12px;border-top:1px solid #30363d}
-.ai-input{flex:1;background:#21262d;border:1px solid #30363d;color:#e2e8f0;border-radius:6px;padding:6px 10px;font-size:12px;outline:none;font-family:inherit}
-.ai-send{background:#f97316;border:none;color:#fff;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;font-weight:600}
-.ai-send:disabled{opacity:0.5;cursor:not-allowed}
+.ai-msg.user{background:#1f6feb33;color:#58a6ff;align-self:flex-end;max-width:92%}
+.ai-msg.bot{background:#21262d;color:#c9d1d9;align-self:flex-start;max-width:92%}
+.ai-row{display:flex;gap:6px;padding:10px 12px;border-top:1px solid #30363d}
+.ai-in{flex:1;background:#21262d;border:1px solid #30363d;color:#e2e8f0;border-radius:6px;padding:6px 10px;font-size:12px;outline:none;font-family:inherit}
+.ai-go{background:#f97316;border:none;color:#fff;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;font-weight:700}
+.ai-go:disabled{opacity:0.4;cursor:not-allowed}
 .status-bar{display:flex;align-items:center;justify-content:space-between;padding:2px 12px;background:#f97316;font-size:11px;color:#fff;flex-shrink:0}
-.status-left,.status-right{display:flex;gap:16px;align-items:center}
+.sl,.sr{display:flex;gap:14px;align-items:center}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
-.dot.green{background:#3fb950}
-.dot.yellow{background:#d29922;animation:pulse 1s infinite}
-.dot.red{background:#f85149}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-.save-badge{font-size:10px;background:#ffffff33;border-radius:3px;padding:1px 5px}
-.modal-backdrop{display:none;position:fixed;inset:0;background:#00000088;z-index:100;align-items:center;justify-content:center}
-.modal-backdrop.open{display:flex}
+.dot.g{background:#3fb950}.dot.y{background:#d29922;animation:p 1s infinite}.dot.r{background:#f85149}
+@keyframes p{0%,100%{opacity:1}50%{opacity:0.3}}
+.sbadge{font-size:10px;background:#ffffff33;border-radius:3px;padding:1px 5px}
+.modal-bg{display:none;position:fixed;inset:0;background:#000000aa;z-index:100;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
 .modal{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:20px;width:340px}
 .modal h3{color:#e2e8f0;font-size:14px;margin-bottom:12px}
 .modal input{width:100%;background:#21262d;border:1px solid #30363d;color:#e2e8f0;border-radius:6px;padding:7px 10px;font-size:13px;outline:none;font-family:inherit;margin-bottom:10px}
 .modal-btns{display:flex;gap:8px;justify-content:flex-end}
-.modal-btn{background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:5px 14px;font-size:12px;cursor:pointer}
-.modal-btn.primary{background:#238636;border-color:#238636;color:#fff}
+.mbtn{background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:5px 14px;font-size:12px;cursor:pointer}
+.mbtn.ok{background:#238636;border-color:#238636;color:#fff}
+.pyodide-status{font-size:10px;padding:2px 6px;border-radius:3px;background:#21262d;color:#8b949e}
+.pyodide-status.ready{color:#3fb950}
+.pyodide-status.loading{color:#d29922}
 </style>
 </head>
 <body>
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:12px">
     <span class="logo">&#9672; replit</span>
-    <span class="project-name" id="projectName">my-project</span>
+    <span class="project-name">my-project</span>
+    <span class="pyodide-status loading" id="pyStatus">Python: loading...</span>
   </div>
   <div class="topbar-right">
-    <select class="lang-select" id="langSelect">
+    <select class="lang-select" id="langSel">
       <option value="javascript">JavaScript (Node)</option>
-      <option value="python">Python 3</option>
+      <option value="python">Python 3 + packages</option>
+      <option value="html">HTML / CSS</option>
       <option value="bash">Bash</option>
       <option value="typescript">TypeScript</option>
       <option value="cpp">C++</option>
       <option value="java">Java</option>
       <option value="rust">Rust</option>
       <option value="go">Go</option>
-      <option value="php">PHP</option>
       <option value="ruby">Ruby</option>
     </select>
-    <button class="btn-secondary" id="aiToggle">&#10022; AI</button>
+    <button class="btn-secondary" id="aiBtn">&#10022; AI</button>
     <button class="btn-run" id="runBtn">&#9654; Run</button>
   </div>
 </div>
+
 <div class="workspace">
   <div class="sidebar">
     <div class="sidebar-header">
       Files
-      <div style="display:flex;gap:4px">
-        <button class="icon-btn" id="newFileBtn" title="New file">+</button>
-        <button class="icon-btn" id="saveAllBtn" title="Save all">&#128190;</button>
+      <div style="display:flex;gap:2px">
+        <button class="icon-btn" id="newBtn">+</button>
+        <button class="icon-btn" id="saveBtn" title="Save">&#128190;</button>
       </div>
     </div>
     <div class="file-tree" id="fileTree"></div>
     <div class="pkg-section">
-      <div class="pkg-header">Packages (JS/Node)</div>
+      <div class="pkg-header">
+        Packages
+        <span class="pkg-badge" id="pkgBadge">npm / PyPI</span>
+      </div>
       <div class="pkg-input-row">
-        <input class="pkg-input" id="pkgInput" placeholder="e.g. lodash" />
-        <button class="pkg-btn" id="pkgAddBtn">+</button>
+        <input class="pkg-input" id="pkgIn" placeholder="lodash / numpy..." />
+        <button class="pkg-btn" id="pkgAdd">+</button>
       </div>
       <div class="pkg-list" id="pkgList"></div>
     </div>
   </div>
+
   <div class="editor-area">
     <div class="tabs" id="tabBar"></div>
     <div class="editor-wrapper">
-      <div class="line-numbers" id="lineNumbers">1</div>
-      <textarea class="code-editor" id="codeEditor" spellcheck="false"></textarea>
+      <div class="line-numbers" id="lineNums">1</div>
+      <textarea class="code-editor" id="editor" spellcheck="false"></textarea>
     </div>
     <div class="output-panel">
       <div class="output-tabs">
-        <div class="output-tab active" data-tab="console">Console</div>
-        <div class="output-tab" data-tab="terminal">Terminal</div>
-        <div class="output-tab" data-tab="webview">Web View</div>
+        <div class="output-tab active" data-p="console">Console</div>
+        <div class="output-tab" data-p="terminal">Terminal</div>
+        <div class="output-tab" data-p="webview">Web View</div>
       </div>
-      <div id="consoleTab" class="output-content"></div>
-      <div id="terminalTab" class="terminal-wrap" style="display:none">
-        <div class="terminal-output" id="terminalOutput"></div>
-        <div class="terminal-input-row">
-          <span class="terminal-prompt-label">$ </span>
-          <input class="terminal-input" id="terminalInput" placeholder="type a command and press Enter..." autocomplete="off" />
+      <div class="out-pane active" id="p-console">
+        <div class="console-out" id="consoleOut"></div>
+      </div>
+      <div class="out-pane" id="p-terminal">
+        <div class="terminal-wrap">
+          <div class="terminal-out" id="termOut"></div>
+          <div class="terminal-row">
+            <span class="t-prompt">$</span>
+            <input class="t-input" id="termIn" placeholder="type command + Enter..." autocomplete="off"/>
+          </div>
         </div>
       </div>
-      <div id="webviewTab" style="display:none;flex:1;background:#fff">
-        <iframe id="webviewFrame" style="width:100%;height:100%;border:none"></iframe>
+      <div class="out-pane" id="p-webview">
+        <div class="webview-wrap">
+          <iframe id="webFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
       </div>
     </div>
   </div>
+
   <div class="ai-panel" id="aiPanel">
-    <div class="ai-header">&#10022; AI Assistant</div>
-    <div class="ai-messages" id="aiMessages">
-      <div class="ai-msg assistant">Hi! I can write, debug, or explain your code. I see what file you are editing. Ask anything.</div>
+    <div class="ai-header">
+      &#10022; AI
+      <span class="ai-clear" id="aiClear">clear</span>
     </div>
-    <div class="ai-input-row">
-      <input class="ai-input" id="aiInput" placeholder="Ask AI..." />
-      <button class="ai-send" id="aiSend">&#8594;</button>
+    <div class="ai-msgs" id="aiMsgs">
+      <div class="ai-msg bot">Hey! I can write, fix, or explain your code. I see your current file. Ask anything.</div>
+    </div>
+    <div class="ai-row">
+      <input class="ai-in" id="aiIn" placeholder="Ask AI..."/>
+      <button class="ai-go" id="aiGo">&#8594;</button>
     </div>
   </div>
 </div>
+
 <div class="status-bar">
-  <div class="status-left">
-    <span><span class="dot green" id="statusDot"></span><span id="statusText">Ready</span></span>
-    <span id="statusLang">JavaScript</span>
-    <span class="save-badge" id="saveBadge"></span>
+  <div class="sl">
+    <span><span class="dot g" id="sDot"></span><span id="sTxt">Ready</span></span>
+    <span id="sLang">JavaScript</span>
+    <span class="sbadge" id="sBadge"></span>
   </div>
-  <div class="status-right">
-    <span id="cursorPos">Ln 1, Col 1</span>
-    <span id="charCount">0 chars</span>
+  <div class="sr">
+    <span id="sCursor">Ln 1, Col 1</span>
+    <span id="sChars">0 chars</span>
   </div>
 </div>
-<div class="modal-backdrop" id="newFileModal">
+
+<div class="modal-bg" id="newModal">
   <div class="modal">
     <h3>New File</h3>
-    <input id="newFileName" placeholder="filename.py" />
+    <input id="newName" placeholder="main.py"/>
     <div class="modal-btns">
-      <button class="modal-btn" id="cancelNewFile">Cancel</button>
-      <button class="modal-btn primary" id="confirmNewFile">Create</button>
+      <button class="mbtn" id="cancelNew">Cancel</button>
+      <button class="mbtn ok" id="confirmNew">Create</button>
     </div>
   </div>
 </div>
+
+<!-- Hidden iframe for JS sandbox execution -->
+<iframe id="jsSandbox" style="display:none" sandbox="allow-scripts"></iframe>
+
 <script>
-const PISTON='https://emkc.org/api/v2/piston/execute';
-const LANG_VERSIONS={javascript:'18.15.0',python:'3.10.0',bash:'5.2.0',typescript:'5.0.3',cpp:'10.2.0',java:'15.0.2',rust:'1.68.2',go:'1.16.2',php:'8.2.3',ruby:'3.0.1'};
-const LANG_FILES={javascript:'index.js',python:'main.py',bash:'script.sh',typescript:'index.ts',cpp:'main.cpp',java:'Main.java',rust:'main.rs',go:'main.go',php:'index.php',ruby:'main.rb'};
-const LANG_DISPLAY={javascript:'JavaScript (Node)',python:'Python 3',bash:'Bash',typescript:'TypeScript',cpp:'C++',java:'Java',rust:'Rust',go:'Go',php:'PHP',ruby:'Ruby'};
-const FILE_ICONS={'.js':'JS','.py':'PY','.html':'HTML','.css':'CSS','.md':'MD','.ts':'TS','.sh':'SH','.cpp':'C++','.java':'JV','.rs':'RS','.go':'GO','.php':'PHP','.rb':'RB','.json':'{}',default:'TXT'};
-const DEFAULTS={
-javascript:`// Node.js - real execution via Piston API\nconst greet = (name) => \`Hello, \${name}!\`;\nconsole.log(greet('World'));\n\nconst fib = (n) => n <= 1 ? n : fib(n-1) + fib(n-2);\nfor (let i = 0; i <= 8; i++) console.log(\`fib(\${i}) = \${fib(i)}\`);`,
-python:`# Python 3 - real execution\nimport math, json\n\ndef greet(name):\n    return f"Hello, {name}!"\n\nprint(greet("World"))\nprint(f"Pi = {math.pi:.4f}")\nsquares = [x**2 for x in range(1, 6)]\nprint("Squares:", squares)`,
-bash:`#!/bin/bash\necho "Hello from Bash!"\nfor i in 1 2 3 4 5; do\n  echo "Count: $i"\ndone\necho "Date: $(date)"`,
-typescript:`const greet = (name: string): string => \`Hello, \${name}!\`;\nconsole.log(greet('TypeScript'));\n\ninterface User { name: string; age: number; }\nconst users: User[] = [{name:'Alice',age:30},{name:'Bob',age:25}];\nusers.forEach(u => console.log(\`\${u.name}: \${u.age}\`));`,
-cpp:`#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\nint main(){\n    cout<<"Hello from C++!"<<endl;\n    vector<int> v={5,2,8,1,9,3};\n    sort(v.begin(),v.end());\n    for(int x:v) cout<<x<<" ";\n    cout<<endl;\n    return 0;\n}`,
-java:`public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello from Java!");\n        for(int i=1;i<=5;i++)\n            System.out.println(i+"^2 = "+(i*i));\n    }\n}`,
-rust:`fn main(){\n    println!("Hello from Rust!");\n    let v:Vec<i32>=(1..=5).collect();\n    v.iter().for_each(|x| print!("{} ",x*x));\n    println!();\n    println!("Sum: {}",v.iter().sum::<i32>());\n}`,
-go:`package main\nimport "fmt"\nfunc fib(n int) int { if n<=1{return n}; return fib(n-1)+fib(n-2) }\nfunc main(){\n    fmt.Println("Hello from Go!")\n    for i:=0;i<=8;i++{ fmt.Printf("fib(%d)=%d\\n",i,fib(i)) }\n}`,
-php:`<?php\necho "Hello from PHP!\\n";\n$arr=[1,2,3,4,5];\n$sq=array_map(fn($x)=>$x*$x,$arr);\necho "Squares: ".implode(", ",$sq)."\\n";\necho "Sum: ".array_sum($arr)."\\n";`,
-ruby:`puts "Hello from Ruby!"\n(1..5).each{|i| puts "#{i}^2 = #{i**2}"}\narr=[3,1,4,1,5,9,2,6]\nputs "Sorted: #{arr.sort.join(', ')}"`
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const PISTON = 'https://emkc.org/api/v2/piston/execute';
+const ESM = 'https://esm.sh/';
+const PYODIDE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
+
+const LV = {javascript:'18.15.0',bash:'5.2.0',typescript:'5.0.3',cpp:'10.2.0',java:'15.0.2',rust:'1.68.2',go:'1.16.2',ruby:'3.0.1'};
+const LF = {javascript:'index.js',python:'main.py',html:'index.html',bash:'script.sh',typescript:'index.ts',cpp:'main.cpp',java:'Main.java',rust:'main.rs',go:'main.go',ruby:'main.rb'};
+const LD = {javascript:'JavaScript',python:'Python 3',html:'HTML/CSS',bash:'Bash',typescript:'TypeScript',cpp:'C++',java:'Java',rust:'Rust',go:'Go',ruby:'Ruby'};
+const ICONS = {'.js':'JS','.py':'PY','.html':'HTM','.css':'CSS','.md':'MD','.ts':'TS','.sh':'SH','.cpp':'C++','.java':'JV','.rs':'RS','.go':'GO','.rb':'RB','.json':'{}',d:'TXT'};
+
+const STARTERS = {
+javascript:`// JavaScript — runs in real Node.js via Piston API
+// npm packages available via esm.sh — add them in sidebar!
+
+const greet = (name) => \`Hello, \${name}!\`;
+console.log(greet('World'));
+
+// Async/await works
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+async function main() {
+  await delay(10);
+  const nums = [1,2,3,4,5];
+  console.log('Sum:', nums.reduce((a,b) => a+b, 0));
+  console.log('Squares:', nums.map(n => n*n));
+}
+main();`,
+
+python:`# Python 3 — runs in browser via Pyodide (WebAssembly)!
+# Real packages: add numpy, pandas, requests, etc. in sidebar
+# micropip installs directly from PyPI
+
+import sys
+print(f"Python {sys.version}")
+
+def fib(n):
+    a, b = 0, 1
+    for _ in range(n):
+        yield a
+        a, b = b, a + b
+
+print("Fibonacci:", list(fib(10)))
+
+# Try adding 'numpy' in the sidebar, then:
+# import numpy as np
+# print(np.array([1,2,3]) * 2)`,
+
+html:`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>My App</title>
+  <style>
+    body { font-family: sans-serif; background: #0e1117; color: #e2e8f0; padding: 2rem; margin: 0; }
+    h1 { color: #f97316; margin-bottom: 1rem; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
+    button { background: #f97316; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-size: 14px; }
+    button:hover { background: #ea6c0c; }
+    #output { margin-top: 1rem; color: #3fb950; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+  <div class="card">
+    <p>Click the button below:</p>
+    <button onclick="clicked()">Click me!</button>
+    <div id="output"></div>
+  </div>
+  <script>
+    let count = 0;
+    function clicked() {
+      count++;
+      document.getElementById('output').textContent = 'Clicked ' + count + ' times!';
+    }
+  <\/script>
+</body>
+</html>`,
+
+bash:`#!/bin/bash
+echo "Hello from Bash!"
+echo "Date: $(date)"
+echo ""
+echo "--- Loop ---"
+for i in $(seq 1 5); do
+  echo "  step $i"
+done
+echo ""
+echo "--- Environment ---"
+echo "PATH entries: $(echo $PATH | tr ':' '\\n' | wc -l)"`,
+
+typescript:`// TypeScript — transpiled and run via Piston
+interface User {
+  name: string;
+  age: number;
+  role: 'admin' | 'user';
+}
+
+const greet = (user: User): string =>
+  \`[\${user.role.toUpperCase()}] Hello, \${user.name}! Age: \${user.age}\`;
+
+const users: User[] = [
+  { name: 'Alice', age: 30, role: 'admin' },
+  { name: 'Bob', age: 25, role: 'user' }
+];
+
+users.forEach(u => console.log(greet(u)));
+
+const sum = (arr: number[]): number => arr.reduce((a, b) => a + b, 0);
+console.log('Sum 1-10:', sum([...Array(10)].map((_, i) => i + 1)));`,
+
+cpp:`#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+using namespace std;
+
+int main() {
+    cout << "Hello from C++!" << endl;
+    
+    vector<int> v = {5, 2, 8, 1, 9, 3, 7, 4, 6};
+    sort(v.begin(), v.end());
+    
+    cout << "Sorted: ";
+    for (int x : v) cout << x << " ";
+    cout << endl;
+    
+    int sum = accumulate(v.begin(), v.end(), 0);
+    cout << "Sum: " << sum << endl;
+    
+    return 0;
+}`,
+
+java:`public class Main {
+    public static int fib(int n) {
+        if (n <= 1) return n;
+        return fib(n-1) + fib(n-2);
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("Hello from Java!");
+        
+        System.out.print("Fibonacci: ");
+        for (int i = 0; i < 10; i++) {
+            System.out.print(fib(i) + " ");
+        }
+        System.out.println();
+        
+        int[] arr = {5, 2, 8, 1, 9};
+        int sum = 0;
+        for (int x : arr) sum += x;
+        System.out.println("Sum: " + sum);
+    }
+}`,
+
+rust:`fn fib(n: u64) -> u64 {
+    match n {
+        0 => 0,
+        1 => 1,
+        _ => fib(n-1) + fib(n-2)
+    }
+}
+
+fn main() {
+    println!("Hello from Rust!");
+    
+    let fibs: Vec<u64> = (0..10).map(fib).collect();
+    println!("Fibonacci: {:?}", fibs);
+    
+    let mut v: Vec<i32> = vec![5, 2, 8, 1, 9, 3];
+    v.sort();
+    println!("Sorted: {:?}", v);
+    println!("Sum: {}", v.iter().sum::<i32>());
+}`,
+
+go:`package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+func fib(n int) int {
+    if n <= 1 { return n }
+    return fib(n-1) + fib(n-2)
+}
+
+func main() {
+    fmt.Println("Hello from Go!")
+    
+    fibs := make([]int, 10)
+    for i := range fibs { fibs[i] = fib(i) }
+    fmt.Println("Fibonacci:", fibs)
+    
+    nums := []int{5, 2, 8, 1, 9, 3}
+    sort.Ints(nums)
+    fmt.Println("Sorted:", nums)
+    
+    sum := 0
+    for _, n := range nums { sum += n }
+    fmt.Println("Sum:", sum)
+}`,
+
+ruby:`puts "Hello from Ruby!"
+
+def fib(n)
+  return n if n <= 1
+  fib(n-1) + fib(n-2)
+end
+
+fibs = (0..9).map { |i| fib(i) }
+puts "Fibonacci: #{fibs.join(', ')}"
+
+arr = [5, 2, 8, 1, 9, 3]
+puts "Sorted: #{arr.sort.join(', ')}"
+puts "Sum: #{arr.sum}"`
 };
-let state={files:{},openTabs:[],activeTab:'',editorContents:{},packages:[],currentLang:'javascript',termHistory:[],termHistIdx:-1,aiOpen:false};
-function saveState(){
-  state.editorContents[state.activeTab]=editor.value;
-  try{
-    localStorage.setItem('rc_files',JSON.stringify(state.editorContents));
-    localStorage.setItem('rc_pkgs',JSON.stringify(state.packages));
-    localStorage.setItem('rc_lang',state.currentLang);
-    localStorage.setItem('rc_tabs',JSON.stringify(state.openTabs));
-    localStorage.setItem('rc_active',state.activeTab);
-    showBadge('Saved');
-  }catch(e){}
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let S = {
+  files: {}, tabs: [], active: '', contents: {},
+  packages: [], lang: 'javascript', aiOpen: false,
+  termHistory: [], termIdx: -1
+};
+
+// ─── PYODIDE ─────────────────────────────────────────────────────────────────
+let pyodide = null;
+let pyodideLoading = false;
+let pyodideReady = false;
+
+async function loadPyodide() {
+  if (pyodideReady || pyodideLoading) return;
+  pyodideLoading = true;
+  try {
+    const script = document.createElement('script');
+    script.src = PYODIDE_URL;
+    document.head.appendChild(script);
+    await new Promise((resolve, reject) => {
+      script.onload = resolve;
+      script.onerror = () => reject(new Error('Failed to load Pyodide script'));
+    });
+    pyodide = await window.loadPyodide();
+    await pyodide.loadPackage('micropip');
+    pyodideReady = true;
+    document.getElementById('pyStatus').textContent = 'Python: ready';
+    document.getElementById('pyStatus').className = 'pyodide-status ready';
+  } catch(e) {
+    document.getElementById('pyStatus').textContent = 'Python: failed';
+    document.getElementById('pyStatus').className = 'pyodide-status';
+  }
+  pyodideLoading = false;
 }
-function loadState(){
-  try{
-    const f=localStorage.getItem('rc_files');
-    const p=localStorage.getItem('rc_pkgs');
-    const l=localStorage.getItem('rc_lang');
-    const t=localStorage.getItem('rc_tabs');
-    const a=localStorage.getItem('rc_active');
-    if(f)state.editorContents=JSON.parse(f);
-    if(p)state.packages=JSON.parse(p);
-    if(l)state.currentLang=l;
-    if(t)state.openTabs=JSON.parse(t);
-    if(a)state.activeTab=a;
-    state.files=Object.fromEntries(Object.keys(state.editorContents).map(k=>[k,true]));
-    return Object.keys(state.files).length>0;
-  }catch(e){return false;}
+
+// Start loading Pyodide immediately in background
+loadPyodide();
+
+// ─── PERSISTENCE ─────────────────────────────────────────────────────────────
+function persist() {
+  S.contents[S.active] = ed.value;
+  try {
+    localStorage.setItem('rc3_c', JSON.stringify(S.contents));
+    localStorage.setItem('rc3_p', JSON.stringify(S.packages));
+    localStorage.setItem('rc3_l', S.lang);
+    localStorage.setItem('rc3_t', JSON.stringify(S.tabs));
+    localStorage.setItem('rc3_a', S.active);
+    badge('Saved');
+  } catch(e) {}
 }
-let badgeT;
-function showBadge(msg){
-  const b=document.getElementById('saveBadge');
-  b.textContent=msg;
-  clearTimeout(badgeT);
-  badgeT=setTimeout(()=>b.textContent='',2000);
+
+function hydrate() {
+  try {
+    const c = localStorage.getItem('rc3_c');
+    const p = localStorage.getItem('rc3_p');
+    const l = localStorage.getItem('rc3_l');
+    const t = localStorage.getItem('rc3_t');
+    const a = localStorage.getItem('rc3_a');
+    if (c) S.contents = JSON.parse(c);
+    if (p) S.packages = JSON.parse(p);
+    if (l) S.lang = l;
+    if (t) S.tabs = JSON.parse(t);
+    if (a) S.active = a;
+    S.files = Object.fromEntries(Object.keys(S.contents).map(k => [k, 1]));
+    return Object.keys(S.files).length > 0;
+  } catch(e) { return false; }
 }
-const editor=document.getElementById('codeEditor');
-const lineNums=document.getElementById('lineNumbers');
-const tabBar=document.getElementById('tabBar');
-const fileTree=document.getElementById('fileTree');
-const runBtn=document.getElementById('runBtn');
-const statusDot=document.getElementById('statusDot');
-const statusText=document.getElementById('statusText');
-const statusLang=document.getElementById('statusLang');
-const cursorPos=document.getElementById('cursorPos');
-const charCount=document.getElementById('charCount');
-const langSelect=document.getElementById('langSelect');
-const consoleTab=document.getElementById('consoleTab');
-const terminalOutput=document.getElementById('terminalOutput');
-function getExt(n){return n.includes('.')?'.'+n.split('.').pop():'';}
-function getIcon(n){return FILE_ICONS[getExt(n)]||FILE_ICONS.default;}
-function renderFileTree(){
-  fileTree.innerHTML='';
-  Object.keys(state.files).forEach(name=>{
-    const item=document.createElement('div');
-    item.className='file-item'+(name===state.activeTab?' active':'');
-    item.innerHTML=`<span style="font-size:10px;background:#21262d;padding:1px 4px;border-radius:3px;color:#8b949e">${getIcon(name)}</span><span style="flex:1">${name}</span><span class="file-delete" data-file="${name}">x</span>`;
-    item.onclick=(e)=>{
-      if(e.target.dataset.file){deleteFile(e.target.dataset.file);return;}
+
+let bT;
+function badge(m) {
+  const b = document.getElementById('sBadge');
+  b.textContent = m;
+  clearTimeout(bT);
+  bT = setTimeout(() => b.textContent = '', 2500);
+}
+
+// ─── DOM REFS ─────────────────────────────────────────────────────────────────
+const ed = document.getElementById('editor');
+const lineNums = document.getElementById('lineNums');
+const tabBar = document.getElementById('tabBar');
+const fileTree = document.getElementById('fileTree');
+const runBtn = document.getElementById('runBtn');
+const sDot = document.getElementById('sDot');
+const sTxt = document.getElementById('sTxt');
+const sLang = document.getElementById('sLang');
+const consoleOut = document.getElementById('consoleOut');
+const termOut = document.getElementById('termOut');
+const langSel = document.getElementById('langSel');
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function ext(n) { return n.includes('.') ? '.' + n.split('.').pop() : ''; }
+function icon(n) { return ICONS[ext(n)] || ICONS.d; }
+
+function setStatus(t, c='g') {
+  sTxt.textContent = t;
+  sDot.className = 'dot ' + c;
+}
+
+// ─── FILE TREE ───────────────────────────────────────────────────────────────
+function renderTree() {
+  fileTree.innerHTML = '';
+  Object.keys(S.files).forEach(name => {
+    const d = document.createElement('div');
+    d.className = 'file-item' + (name === S.active ? ' active' : '');
+    d.innerHTML = `<span style="font-size:9px;background:#21262d;padding:1px 4px;border-radius:2px;color:#8b949e;flex-shrink:0">${icon(name)}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span><span class="file-delete" data-f="${name}">x</span>`;
+    d.onclick = e => {
+      if (e.target.dataset.f) { delFile(e.target.dataset.f); return; }
       openFile(name);
     };
-    fileTree.appendChild(item);
+    fileTree.appendChild(d);
   });
 }
-function renderTabs(){
-  tabBar.innerHTML='';
-  state.openTabs.forEach(name=>{
-    const tab=document.createElement('div');
-    tab.className='tab'+(name===state.activeTab?' active':'');
-    tab.innerHTML=`${getIcon(name)} ${name} <span class="tab-close" data-file="${name}">x</span>`;
-    tab.onclick=(e)=>{
-      if(e.target.classList.contains('tab-close')){closeTab(e.target.dataset.file);return;}
+
+function renderTabs() {
+  tabBar.innerHTML = '';
+  S.tabs.forEach(name => {
+    const t = document.createElement('div');
+    t.className = 'tab' + (name === S.active ? ' active' : '');
+    t.innerHTML = `${icon(name)} ${name} <span class="tab-close" data-f="${name}">x</span>`;
+    t.onclick = e => {
+      if (e.target.classList.contains('tab-close')) { closeTab(e.target.dataset.f); return; }
       openFile(name);
     };
-    tabBar.appendChild(tab);
+    tabBar.appendChild(t);
   });
 }
-function updateLineNumbers(){
-  const lines=editor.value.split('\n').length;
-  lineNums.innerHTML=Array.from({length:lines},(_,i)=>i+1).join('\n');
-  lineNums.scrollTop=editor.scrollTop;
-  charCount.textContent=editor.value.length+' chars';
+
+function updateLines() {
+  const n = ed.value.split('\n').length;
+  lineNums.innerHTML = Array.from({length:n},(_,i)=>i+1).join('\n');
+  lineNums.scrollTop = ed.scrollTop;
+  document.getElementById('sChars').textContent = ed.value.length + ' chars';
 }
-function openFile(name){
-  if(state.activeTab)state.editorContents[state.activeTab]=editor.value;
-  state.activeTab=name;
-  if(!state.openTabs.includes(name))state.openTabs.push(name);
-  editor.value=state.editorContents[name]||'';
-  updateLineNumbers();
-  renderFileTree();
+
+function openFile(name) {
+  if (S.active) S.contents[S.active] = ed.value;
+  S.active = name;
+  if (!S.tabs.includes(name)) S.tabs.push(name);
+  ed.value = S.contents[name] || '';
+  updateLines();
+  renderTree();
   renderTabs();
-  saveState();
 }
-function closeTab(name){
-  if(state.activeTab===name)state.editorContents[name]=editor.value;
-  state.openTabs=state.openTabs.filter(t=>t!==name);
-  if(state.activeTab===name){
-    state.activeTab=state.openTabs[state.openTabs.length-1]||'';
-    editor.value=state.activeTab?(state.editorContents[state.activeTab]||''):'';
-    updateLineNumbers();
+
+function closeTab(name) {
+  if (S.active === name) S.contents[name] = ed.value;
+  S.tabs = S.tabs.filter(t => t !== name);
+  if (S.active === name) {
+    S.active = S.tabs[S.tabs.length-1] || '';
+    ed.value = S.active ? (S.contents[S.active]||'') : '';
+    updateLines();
   }
-  renderTabs();renderFileTree();saveState();
+  renderTabs(); renderTree();
 }
-function deleteFile(name){
-  if(!confirm('Delete '+name+'?'))return;
-  delete state.files[name];delete state.editorContents[name];
-  closeTab(name);renderFileTree();saveState();
+
+function delFile(name) {
+  if (!confirm('Delete ' + name + '?')) return;
+  delete S.files[name];
+  delete S.contents[name];
+  closeTab(name);
+  renderTree();
+  persist();
 }
-function createFile(name){
-  if(!name)return;
-  state.files[name]=true;
-  state.editorContents[name]=DEFAULTS[state.currentLang]||'';
+
+function makeFile(name) {
+  if (!name) return;
+  S.files[name] = 1;
+  S.contents[name] = STARTERS[S.lang] || '';
   openFile(name);
+  persist();
 }
-function clog(msg,type=''){
-  const line=document.createElement('div');
-  line.className=type;line.textContent=msg;
-  consoleTab.appendChild(line);
-  consoleTab.scrollTop=consoleTab.scrollHeight;
+
+// ─── CONSOLE LOGGING ─────────────────────────────────────────────────────────
+function clog(msg, cls='') {
+  const d = document.createElement('div');
+  if (cls) d.className = cls;
+  d.textContent = msg;
+  consoleOut.appendChild(d);
+  consoleOut.scrollTop = consoleOut.scrollHeight;
 }
-function clearConsole(){consoleTab.innerHTML='';}
-function tlog(msg,color=''){
-  const line=document.createElement('div');
-  if(color)line.style.color=color;
-  line.textContent=msg;
-  terminalOutput.appendChild(line);
-  terminalOutput.scrollTop=terminalOutput.scrollHeight;
-}
-function setStatus(text,dotClass='green'){
-  statusText.textContent=text;
-  statusDot.className='dot '+dotClass;
-}
-async function runCode(){
-  state.editorContents[state.activeTab]=editor.value;
-  const code=editor.value;
-  const lang=state.currentLang;
-  clearConsole();
-  clog('$ run '+state.activeTab+' ['+LANG_DISPLAY[lang]+']','prompt');
-  runBtn.textContent='Stop';runBtn.classList.add('running');
-  setStatus('Running...','yellow');
-  try{
-    const res=await fetch(PISTON,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({language:lang,version:LANG_VERSIONS[lang],files:[{name:LANG_FILES[lang],content:code}]})
-    });
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const data=await res.json();
-    const run=data.run;
-    if(run.stdout)run.stdout.split('\n').forEach(l=>clog(l));
-    if(run.stderr)run.stderr.split('\n').filter(l=>l).forEach(l=>clog(l,'err'));
-    if(run.code===0){clog('\nExited with code 0','info');setStatus('Done','green');}
-    else{clog('\nExited with code '+run.code,'err');setStatus('Error','red');}
-  }catch(e){
-    clog('Execution failed: '+e.message,'err');
-    clog('Requires internet access to Piston API (emkc.org)','warn');
-    setStatus('Error','red');
+function clearConsole() { consoleOut.innerHTML = ''; }
+
+// ─── JAVASCRIPT EXECUTION via real Node (Piston) + npm (esm.sh) ──────────────
+async function runJS(code) {
+  // Rewrite npm imports to esm.sh for browser module execution
+  // But for Piston (Node), just run as-is
+  const pkgNames = S.packages.map(p => p.name);
+  
+  // Prepend require stubs that will work in Node via Piston
+  // Piston's Node has many built-ins but not npm packages
+  // For real npm packages, we run in a sandboxed iframe using ES modules + esm.sh
+  
+  const hasImports = /^import\s+/m.test(code) || /require\s*\(/.test(code);
+  
+  if (S.packages.length > 0 || hasImports) {
+    // Run in iframe sandbox with esm.sh for real npm packages
+    await runJSInBrowser(code);
+  } else {
+    // Pure JS — run via Piston (Node.js)
+    await runViaPiston('javascript', code, LF.javascript);
   }
-  runBtn.innerHTML='&#9654; Run';runBtn.classList.remove('running');
 }
-async function runTermCmd(cmd){
-  if(!cmd.trim())return;
-  state.termHistory.unshift(cmd);state.termHistIdx=-1;
-  tlog('$ '+cmd,'#8b949e');
-  if(cmd==='clear'||cmd==='cls'){terminalOutput.innerHTML='';return;}
-  if(cmd==='help'){tlog('Any bash command runs via Piston API','#58a6ff');return;}
-  try{
-    const res=await fetch(PISTON,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({language:'bash',version:'5.2.0',files:[{name:'cmd.sh',content:'#!/bin/bash\n'+cmd}]})
-    });
-    const data=await res.json();
-    if(data.run.stdout)data.run.stdout.split('\n').forEach(l=>tlog(l));
-    if(data.run.stderr)data.run.stderr.split('\n').filter(l=>l).forEach(l=>tlog(l,'#f85149'));
-    if(!data.run.stdout&&!data.run.stderr)tlog('(no output)','#8b949e');
-  }catch(e){tlog('Error: '+e.message,'#f85149');}
+
+async function runJSInBrowser(code) {
+  clog('Running in browser sandbox (esm.sh for npm packages)...', 'sys');
+  
+  // Rewrite import statements and require() to esm.sh URLs
+  let transformed = code
+    .replace(/^import\s+(.+?)\s+from\s+['"](?!https?:\/\/|\.\/|\.\.\/|\/)(.*?)['"]/gm,
+      (_, imp, pkg) => `import ${imp} from '${ESM}${pkg}'`)
+    .replace(/require\s*\(\s*['"](?!https?:\/\/|\.\/|\.\.\/|\/)([^'"]+)['"]\s*\)/g,
+      (_, pkg) => `(await import('${ESM}${pkg}')).default || (await import('${ESM}${pkg}'))`);
+
+  // Add package imports from sidebar
+  const pkgImports = S.packages.map(p =>
+    `const ${p.alias} = (await import('${ESM}${p.name}')).default || await import('${ESM}${p.name}');`
+  ).join('\n');
+
+  const logs = [];
+  const sandbox = document.getElementById('jsSandbox');
+
+  return new Promise(resolve => {
+    const msgId = 'exec_' + Date.now();
+
+    const listener = e => {
+      if (!e.data || e.data.id !== msgId) return;
+      window.removeEventListener('message', listener);
+      e.data.logs.forEach(l => clog(l.msg, l.type));
+      if (e.data.error) clog('Error: ' + e.data.error, 'err');
+      clog('\nBrowser execution complete.', 'info');
+      resolve();
+    };
+    window.addEventListener('message', listener);
+
+    const src = `
+<!DOCTYPE html><html><body><script type="module">
+const logs = [];
+const wrap = (type) => (...args) => {
+  logs.push({type, msg: args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ')});
+};
+const _log = wrap(''), _err = wrap('err'), _warn = wrap('warn'), _info = wrap('info');
+const console = {log:_log, error:_err, warn:_warn, info:_info, dir:_log, table:_log};
+try {
+  ${pkgImports}
+  ${transformed}
+  parent.postMessage({id:'${msgId}', logs, error:null}, '*');
+} catch(e) {
+  parent.postMessage({id:'${msgId}', logs, error: e.message}, '*');
 }
-function renderPackages(){
-  const list=document.getElementById('pkgList');
-  list.innerHTML='';
-  state.packages.forEach((pkg,i)=>{
-    const tag=document.createElement('div');
-    tag.className='pkg-tag';
-    tag.innerHTML=pkg.name+' <span class="pkg-remove" data-i="'+i+'">x</span>';
-    tag.querySelector('.pkg-remove').onclick=()=>{state.packages.splice(i,1);renderPackages();saveState();};
-    list.appendChild(tag);
+<\/script></body></html>`;
+
+    sandbox.srcdoc = src;
+    setTimeout(() => {
+      window.removeEventListener('message', listener);
+      clog('Timeout (10s). Long-running code may need Piston.', 'warn');
+      resolve();
+    }, 10000);
   });
 }
-document.getElementById('pkgAddBtn').onclick=()=>{
-  const name=document.getElementById('pkgInput').value.trim();
-  if(!name)return;
-  state.packages.push({name,alias:name.replace(/[^a-zA-Z0-9_]/g,'_')});
-  document.getElementById('pkgInput').value='';
-  renderPackages();saveState();
-  clog('Package "'+name+'" tracked. Use require("'+name+'") in your JS.','info');
+
+// ─── PYTHON EXECUTION via Pyodide + micropip ──────────────────────────────────
+async function runPython(code) {
+  if (!pyodideReady) {
+    if (!pyodideLoading) loadPyodide();
+    clog('Pyodide loading... please wait a moment and try again.', 'warn');
+    clog('(Python runs fully in your browser via WebAssembly)', 'info');
+    return;
+  }
+
+  clog('Python 3 (Pyodide + WebAssembly)...', 'sys');
+
+  // Auto-install packages from sidebar
+  if (S.packages.length > 0) {
+    const pyPkgs = S.packages.map(p => p.name);
+    clog('Installing: ' + pyPkgs.join(', '), 'info');
+    try {
+      const micropip = pyodide.pyimport('micropip');
+      for (const pkg of pyPkgs) {
+        try {
+          await micropip.install(pkg);
+          clog('  installed: ' + pkg, 'info');
+        } catch(e) {
+          clog('  failed: ' + pkg + ' — ' + e.message, 'warn');
+        }
+      }
+    } catch(e) {
+      clog('micropip error: ' + e.message, 'warn');
+    }
+  }
+
+  // Also detect imports in code and try to install them
+  const importRe = /^(?:import|from)\s+(\w+)/gm;
+  const builtins = new Set(['sys','os','math','json','re','datetime','time','random','collections','itertools','functools','pathlib','io','abc','typing','enum','dataclasses','copy','pprint','string','struct','pickle','csv','hashlib','hmac','base64','urllib','http','email','html','xml','sqlite3','threading','multiprocessing','subprocess','shutil','tempfile','glob','fnmatch','logging','unittest','traceback','gc','inspect','dis','ast','builtins','__future__']);
+  const detectedImports = [];
+  let m;
+  while ((m = importRe.exec(code)) !== null) {
+    const pkg = m[1];
+    if (!builtins.has(pkg) && !detectedImports.includes(pkg)) {
+      detectedImports.push(pkg);
+    }
+  }
+
+  if (detectedImports.length > 0) {
+    const micropip = pyodide.pyimport('micropip');
+    for (const pkg of detectedImports) {
+      try {
+        await pyodide.loadPackage(pkg);
+      } catch(e) {
+        try {
+          await micropip.install(pkg);
+          clog('  auto-installed: ' + pkg, 'info');
+        } catch(e2) { /* package may already be available or unavailable */ }
+      }
+    }
+  }
+
+  // Capture stdout/stderr
+  let stdout = '';
+  let stderr = '';
+  pyodide.setStdout({ batched: s => { stdout += s + '\n'; }});
+  pyodide.setStderr({ batched: s => { stderr += s + '\n'; }});
+
+  try {
+    await pyodide.runPythonAsync(code);
+    if (stdout) stdout.trimEnd().split('\n').forEach(l => clog(l));
+    if (stderr) stderr.trimEnd().split('\n').filter(l=>l).forEach(l => clog(l, 'warn'));
+    clog('\nProcess exited with code 0', 'info');
+  } catch(e) {
+    if (stdout) stdout.trimEnd().split('\n').forEach(l => clog(l));
+    clog(e.message, 'err');
+    clog('\nProcess exited with code 1', 'err');
+  }
+}
+
+// ─── PISTON API (compiled/server langs) ──────────────────────────────────────
+async function runViaPiston(lang, code, filename) {
+  clog(`Running via Piston API [${LD[lang]}]...`, 'sys');
+  try {
+    const res = await fetch(PISTON, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({language:lang, version:LV[lang], files:[{name:filename, content:code}]})
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const r = data.run;
+    if (r.stdout) r.stdout.split('\n').forEach(l => clog(l));
+    if (r.stderr) r.stderr.split('\n').filter(l=>l).forEach(l => clog(l, r.code===0?'warn':'err'));
+    clog(`\nExited with code ${r.code}`, r.code===0?'info':'err');
+    setStatus(r.code===0?'Done':'Error', r.code===0?'g':'r');
+  } catch(e) {
+    clog('Piston API error: ' + e.message, 'err');
+    clog('Check your internet connection.', 'warn');
+    setStatus('Error', 'r');
+  }
+}
+
+// ─── HTML PREVIEW ─────────────────────────────────────────────────────────────
+function previewHTML(code) {
+  document.getElementById('webFrame').srcdoc = code;
+  // Switch to webview tab
+  document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.out-pane').forEach(p => p.classList.remove('active'));
+  document.querySelector('[data-p="webview"]').classList.add('active');
+  document.getElementById('p-webview').classList.add('active');
+  clog('HTML rendered in Web View tab.', 'info');
+}
+
+// ─── MAIN RUN ─────────────────────────────────────────────────────────────────
+async function runCode() {
+  S.contents[S.active] = ed.value;
+  const code = ed.value;
+  const lang = S.lang;
+  clearConsole();
+  clog(`$ run ${S.active || LF[lang]} [${LD[lang]}]`, 'prompt');
+  runBtn.textContent = 'Stop'; runBtn.classList.add('running');
+  setStatus('Running...', 'y');
+
+  try {
+    if (lang === 'javascript') {
+      await runJS(code);
+    } else if (lang === 'python') {
+      await runPython(code);
+    } else if (lang === 'html') {
+      previewHTML(code);
+    } else {
+      await runViaPiston(lang, code, LF[lang]);
+    }
+  } catch(e) {
+    clog('Unexpected error: ' + e.message, 'err');
+    setStatus('Error', 'r');
+  }
+
+  runBtn.innerHTML = '&#9654; Run'; runBtn.classList.remove('running');
+  if (sDot.className.includes('y')) setStatus('Done', 'g');
+}
+
+// ─── TERMINAL ─────────────────────────────────────────────────────────────────
+async function runTerm(cmd) {
+  if (!cmd.trim()) return;
+  S.termHistory.unshift(cmd); S.termIdx = -1;
+  const d = document.createElement('div');
+  d.style.color = '#8b949e'; d.textContent = '$ ' + cmd;
+  termOut.appendChild(d);
+
+  if (cmd === 'clear' || cmd === 'cls') { termOut.innerHTML = ''; return; }
+  if (cmd === 'help') {
+    tprint('Commands run via Piston bash API. Examples:', '#58a6ff');
+    tprint('  ls, pwd, echo, python3 -c "print(1+1)", node -e "console.log(2**10)"', '#8b949e');
+    return;
+  }
+  if (cmd.startsWith('cd ')) { tprint('Note: directory state does not persist between commands', '#d29922'); return; }
+
+  try {
+    const res = await fetch(PISTON, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({language:'bash', version:'5.2.0', files:[{name:'cmd.sh', content:'#!/bin/bash\n'+cmd}]})
+    });
+    const data = await res.json();
+    if (data.run.stdout) data.run.stdout.split('\n').forEach(l => tprint(l));
+    if (data.run.stderr) data.run.stderr.split('\n').filter(l=>l).forEach(l => tprint(l,'#f85149'));
+    if (!data.run.stdout && !data.run.stderr) tprint('(no output)', '#8b949e');
+  } catch(e) { tprint('Error: '+e.message,'#f85149'); }
+}
+
+function tprint(msg, color='') {
+  const d = document.createElement('div');
+  if (color) d.style.color = color;
+  d.textContent = msg;
+  termOut.appendChild(d);
+  termOut.scrollTop = termOut.scrollHeight;
+}
+
+// ─── PACKAGES ─────────────────────────────────────────────────────────────────
+function renderPkgs() {
+  const list = document.getElementById('pkgList');
+  list.innerHTML = '';
+  document.getElementById('pkgBadge').textContent = S.lang === 'python' ? 'PyPI / micropip' : 'npm / esm.sh';
+  S.packages.forEach((pkg, i) => {
+    const t = document.createElement('div');
+    t.className = 'pkg-tag';
+    t.innerHTML = `${pkg.name} <span class="pkg-remove" data-i="${i}">x</span>`;
+    t.querySelector('.pkg-remove').onclick = () => {
+      S.packages.splice(i, 1); renderPkgs(); persist();
+    };
+    list.appendChild(t);
+  });
+}
+
+document.getElementById('pkgAdd').onclick = () => {
+  const name = document.getElementById('pkgIn').value.trim();
+  if (!name) return;
+  const alias = name.replace(/-/g,'_').replace(/[^a-zA-Z0-9_]/g,'_');
+  S.packages.push({name, alias});
+  document.getElementById('pkgIn').value = '';
+  renderPkgs(); persist();
+  if (S.lang === 'javascript') clog(`Package "${name}" added. Use: import ${alias} from '${name}' OR require('${name}')`, 'info');
+  else clog(`Package "${name}" added. It will be installed via micropip when you run Python.`, 'info');
 };
-document.getElementById('pkgInput').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('pkgAddBtn').click();});
-document.querySelectorAll('.output-tab').forEach(tab=>{
-  tab.onclick=()=>{
-    document.querySelectorAll('.output-tab').forEach(t=>t.classList.remove('active'));
+document.getElementById('pkgIn').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('pkgAdd').click();
+});
+
+// ─── OUTPUT TABS ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.output-tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.out-pane').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
-    consoleTab.style.display='none';
-    document.getElementById('terminalTab').style.display='none';
-    document.getElementById('webviewTab').style.display='none';
-    if(tab.dataset.tab==='console')consoleTab.style.display='block';
-    else if(tab.dataset.tab==='terminal'){document.getElementById('terminalTab').style.display='flex';document.getElementById('terminalInput').focus();}
-    else if(tab.dataset.tab==='webview'){document.getElementById('webviewTab').style.display='block';document.getElementById('webviewFrame').srcdoc=state.editorContents['index.html']||editor.value;}
+    document.getElementById('p-' + tab.dataset.p).classList.add('active');
+    if (tab.dataset.p === 'terminal') document.getElementById('termIn').focus();
+    if (tab.dataset.p === 'webview' && (S.lang === 'html' || S.active?.endsWith('.html'))) {
+      document.getElementById('webFrame').srcdoc = S.contents[S.active] || ed.value;
+    }
   };
 });
-consoleTab.style.display='block';
-const termInput=document.getElementById('terminalInput');
-termInput.addEventListener('keydown',async(e)=>{
-  if(e.key==='Enter'){const cmd=termInput.value;termInput.value='';await runTermCmd(cmd);}
-  else if(e.key==='ArrowUp'){state.termHistIdx=Math.min(state.termHistIdx+1,state.termHistory.length-1);termInput.value=state.termHistory[state.termHistIdx]||'';}
-  else if(e.key==='ArrowDown'){state.termHistIdx=Math.max(state.termHistIdx-1,-1);termInput.value=state.termHistIdx===-1?'':state.termHistory[state.termHistIdx];}
+
+// ─── TERMINAL INPUT ───────────────────────────────────────────────────────────
+const termIn = document.getElementById('termIn');
+termIn.addEventListener('keydown', async e => {
+  if (e.key === 'Enter') { const cmd = termIn.value; termIn.value = ''; await runTerm(cmd); }
+  else if (e.key === 'ArrowUp') { S.termIdx = Math.min(S.termIdx+1, S.termHistory.length-1); termIn.value = S.termHistory[S.termIdx]||''; }
+  else if (e.key === 'ArrowDown') { S.termIdx = Math.max(S.termIdx-1,-1); termIn.value = S.termIdx===-1?'':S.termHistory[S.termIdx]; }
 });
-editor.addEventListener('input',()=>{updateLineNumbers();saveState();});
-editor.addEventListener('scroll',()=>{lineNums.scrollTop=editor.scrollTop;});
-editor.addEventListener('keydown',(e)=>{
-  if(e.key==='Tab'){e.preventDefault();const s=editor.selectionStart,en=editor.selectionEnd;editor.value=editor.value.substring(0,s)+'  '+editor.value.substring(en);editor.selectionStart=editor.selectionEnd=s+2;updateLineNumbers();}
-  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runCode();}
-  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();saveState();showBadge('Saved');}
+
+// ─── EDITOR EVENTS ────────────────────────────────────────────────────────────
+let saveTimer;
+ed.addEventListener('input', () => {
+  updateLines();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(persist, 1500);
 });
-editor.addEventListener('keyup',()=>{
-  const text=editor.value.substring(0,editor.selectionStart);
-  cursorPos.textContent='Ln '+text.split('\n').length+', Col '+(text.split('\n').pop().length+1);
+ed.addEventListener('scroll', () => { lineNums.scrollTop = ed.scrollTop; });
+ed.addEventListener('keydown', e => {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const s=ed.selectionStart, en=ed.selectionEnd;
+    ed.value=ed.value.substring(0,s)+'  '+ed.value.substring(en);
+    ed.selectionStart=ed.selectionEnd=s+2;
+    updateLines();
+  }
+  if ((e.ctrlKey||e.metaKey)&&e.key==='Enter') { e.preventDefault(); runCode(); }
+  if ((e.ctrlKey||e.metaKey)&&e.key==='s') { e.preventDefault(); persist(); badge('Saved'); }
 });
-langSelect.addEventListener('change',()=>{
-  state.currentLang=langSelect.value;
-  statusLang.textContent=LANG_DISPLAY[state.currentLang];
-  localStorage.setItem('rc_lang',state.currentLang);
+ed.addEventListener('keyup', () => {
+  const t=ed.value.substring(0,ed.selectionStart);
+  document.getElementById('sCursor').textContent='Ln '+t.split('\n').length+', Col '+(t.split('\n').pop().length+1);
 });
-runBtn.onclick=runCode;
-document.getElementById('saveAllBtn').onclick=()=>{state.editorContents[state.activeTab]=editor.value;saveState();showBadge('All saved');};
-document.getElementById('newFileBtn').onclick=()=>{document.getElementById('newFileModal').classList.add('open');document.getElementById('newFileName').focus();};
-document.getElementById('cancelNewFile').onclick=()=>document.getElementById('newFileModal').classList.remove('open');
-document.getElementById('confirmNewFile').onclick=()=>{
-  const name=document.getElementById('newFileName').value.trim();
-  document.getElementById('newFileName').value='';
-  document.getElementById('newFileModal').classList.remove('open');
-  if(name)createFile(name);
+
+// ─── LANG SELECTOR ───────────────────────────────────────────────────────────
+langSel.addEventListener('change', () => {
+  S.lang = langSel.value;
+  sLang.textContent = LD[S.lang];
+  renderPkgs();
+  persist();
+});
+
+// ─── BUTTONS ─────────────────────────────────────────────────────────────────
+runBtn.onclick = runCode;
+document.getElementById('saveBtn').onclick = () => { S.contents[S.active]=ed.value; persist(); badge('All saved'); };
+document.getElementById('newBtn').onclick = () => {
+  document.getElementById('newModal').classList.add('open');
+  document.getElementById('newName').focus();
 };
-document.getElementById('newFileName').addEventListener('keydown',e=>{
-  if(e.key==='Enter')document.getElementById('confirmNewFile').click();
-  if(e.key==='Escape')document.getElementById('cancelNewFile').click();
+document.getElementById('cancelNew').onclick = () => document.getElementById('newModal').classList.remove('open');
+document.getElementById('confirmNew').onclick = () => {
+  const n = document.getElementById('newName').value.trim();
+  document.getElementById('newName').value = '';
+  document.getElementById('newModal').classList.remove('open');
+  if (n) makeFile(n);
+};
+document.getElementById('newName').addEventListener('keydown', e => {
+  if (e.key==='Enter') document.getElementById('confirmNew').click();
+  if (e.key==='Escape') document.getElementById('cancelNew').click();
 });
-document.getElementById('aiToggle').onclick=()=>{state.aiOpen=!state.aiOpen;document.getElementById('aiPanel').classList.toggle('open',state.aiOpen);};
-const aiInput=document.getElementById('aiInput');
-const aiSend=document.getElementById('aiSend');
-const aiMessages=document.getElementById('aiMessages');
-async function sendAiMessage(){
-  const msg=aiInput.value.trim();if(!msg)return;
-  aiInput.value='';aiSend.disabled=true;
-  const ud=document.createElement('div');ud.className='ai-msg user';ud.textContent=msg;aiMessages.appendChild(ud);
-  const td=document.createElement('div');td.className='ai-msg assistant';td.textContent='...';aiMessages.appendChild(td);
-  aiMessages.scrollTop=aiMessages.scrollHeight;
-  const code=state.editorContents[state.activeTab]||editor.value;
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
-        system:'You are an AI coding assistant in a browser IDE. File: "'+state.activeTab+'", Language: '+LANG_DISPLAY[state.currentLang]+'. Code:\n```\n'+code.substring(0,2000)+'\n```\nBe concise, under 200 words.',
-        messages:[{role:'user',content:msg}]})
+
+// ─── AI ──────────────────────────────────────────────────────────────────────
+document.getElementById('aiBtn').onclick = () => {
+  S.aiOpen = !S.aiOpen;
+  document.getElementById('aiPanel').classList.toggle('open', S.aiOpen);
+};
+document.getElementById('aiClear').onclick = () => {
+  document.getElementById('aiMsgs').innerHTML = '<div class="ai-msg bot">Chat cleared. Ask me anything about your code.</div>';
+};
+
+const aiIn = document.getElementById('aiIn');
+const aiGo = document.getElementById('aiGo');
+const aiMsgs = document.getElementById('aiMsgs');
+
+async function askAI() {
+  const msg = aiIn.value.trim(); if (!msg) return;
+  aiIn.value = ''; aiGo.disabled = true;
+  const ud = document.createElement('div'); ud.className='ai-msg user'; ud.textContent=msg; aiMsgs.appendChild(ud);
+  const bd = document.createElement('div'); bd.className='ai-msg bot'; bd.textContent='...'; aiMsgs.appendChild(bd);
+  aiMsgs.scrollTop = aiMsgs.scrollHeight;
+  const code = (S.contents[S.active]||ed.value).substring(0,2500);
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:1000,
+        system:`You are an AI coding assistant in a browser IDE. File: "${S.active}", Language: ${LD[S.lang]}.\nCode:\n\`\`\`\n${code}\n\`\`\`\nBe concise (under 200 words). Use code blocks when showing code.`,
+        messages:[{role:'user',content:msg}]
+      })
     });
-    const data=await res.json();
-    td.textContent=data.content?.find(b=>b.type==='text')?.text||'No response.';
-  }catch(e){td.textContent='AI error: '+e.message;td.style.color='#f85149';}
-  aiSend.disabled=false;aiMessages.scrollTop=aiMessages.scrollHeight;
+    const data = await res.json();
+    bd.textContent = data.content?.find(b=>b.type==='text')?.text || 'No response.';
+  } catch(e) { bd.textContent='AI error: '+e.message; bd.style.color='#f85149'; }
+  aiGo.disabled=false; aiMsgs.scrollTop=aiMsgs.scrollHeight;
 }
-aiSend.onclick=sendAiMessage;
-aiInput.addEventListener('keydown',e=>{if(e.key==='Enter')sendAiMessage();});
-function init(){
-  const loaded=loadState();
-  langSelect.value=state.currentLang;
-  statusLang.textContent=LANG_DISPLAY[state.currentLang];
-  if(!loaded||Object.keys(state.files).length===0){
-    const fn=LANG_FILES[state.currentLang];
-    state.files[fn]=true;state.editorContents[fn]=DEFAULTS[state.currentLang];
-    state.openTabs=[fn];state.activeTab=fn;
+aiGo.onclick = askAI;
+aiIn.addEventListener('keydown', e => { if(e.key==='Enter') askAI(); });
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+function init() {
+  const loaded = hydrate();
+  langSel.value = S.lang;
+  sLang.textContent = LD[S.lang];
+
+  if (!loaded || Object.keys(S.files).length === 0) {
+    const fn = LF[S.lang];
+    S.files[fn] = 1;
+    S.contents[fn] = STARTERS[S.lang];
+    S.tabs = [fn]; S.active = fn;
   }
-  if(!state.files[state.activeTab]){
-    state.activeTab=Object.keys(state.files)[0]||'';
-    if(!state.openTabs.includes(state.activeTab))state.openTabs=[state.activeTab];
+  if (!S.files[S.active]) {
+    S.active = Object.keys(S.files)[0]||'';
+    if (!S.tabs.includes(S.active)) S.tabs = [S.active];
   }
-  editor.value=state.editorContents[state.activeTab]||'';
-  renderFileTree();renderTabs();updateLineNumbers();renderPackages();
-  clog('Replit Clone v2 - Real multi-language execution via Piston API','sys');
-  clog('Languages: JS, Python, Bash, TypeScript, C++, Java, Rust, Go, PHP, Ruby','info');
-  clog('Files auto-save to localStorage. Ctrl+S to save. Ctrl+Enter to run.','info');
-  clog('Terminal tab: run real shell commands. Web View: preview HTML files.','info');
-  clog('--------------------------------------------------------------','prompt');
+  ed.value = S.contents[S.active]||'';
+  renderTree(); renderTabs(); updateLines(); renderPkgs();
+
+  clog('Replit Clone v3 — FULLY FUNCTIONAL', 'sys');
+  clog('JavaScript: real Node.js (Piston) + any npm package (esm.sh)', 'info');
+  clog('Python: runs IN YOUR BROWSER via Pyodide + micropip (any PyPI package)', 'info');
+  clog('Bash/C++/Java/Rust/Go/Ruby: real execution via Piston API', 'info');
+  clog('Files auto-save to localStorage. Ctrl+Enter to run. Ctrl+S to save.', 'info');
+  clog('─────────────────────────────────────────────────────────────', 'prompt');
 }
+
 init();
 </script>
 </body>
