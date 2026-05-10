@@ -226,7 +226,7 @@ body{font-family:'Courier New',monospace;background:#0e1117;color:#e2e8f0;height
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 // Set this to your deployed backend URL (e.g. https://replit-clone.fly.dev)
 // Leave empty to run in offline/localStorage mode
-const BACKEND_URL = window.BACKEND_URL || '';
+const BACKEND_URL = window.BACKEND_URL || (window.location.port === '3001' || (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') ? window.location.origin : '');
 const PISTON = 'https://emkc.org/api/v2/piston/execute';
 const ESM = 'https://esm.sh/';
 
@@ -825,8 +825,10 @@ async function askAI(){
   aiMsgs.scrollTop=aiMsgs.scrollHeight;
   const code=(S.contents[S.active]||editor.value).substring(0,2500);
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:`You are an AI coding assistant in a browser IDE. File: "${S.active}", Lang: ${LD[S.lang]}.\nCode:\n\`\`\`\n${code}\n\`\`\`\nBe concise, under 200 words. Use code blocks.`,messages:[{role:'user',content:msg}]})});
+    const endpoint = BACKEND_URL ? `${BACKEND_URL}/api/ai` : 'https://api.anthropic.com/v1/messages';
+    const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-3-5-sonnet-20241022',max_tokens:1024,system:`You are an AI coding assistant in a browser IDE. File: "${S.active}", Lang: ${LD[S.lang]}.\nCode:\n\`\`\`\n${code}\n\`\`\`\nBe concise, under 200 words. Use code blocks.`,messages:[{role:'user',content:msg}]})});
     const data=await res.json();
+    if (data.error) throw new Error(data.error.message || data.error);
     bd.textContent=data.content?.find(b=>b.type==='text')?.text||'No response.';
   }catch(e){bd.textContent='AI error: '+e.message;bd.style.color='#f85149';}
   aiGo.disabled=false;aiMsgs.scrollTop=aiMsgs.scrollHeight;
