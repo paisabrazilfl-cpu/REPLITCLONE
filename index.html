@@ -34,15 +34,106 @@
 html,body{height:100%}
 body{
   font-family:var(--font);
-  background:#1A1A1A;
+  background:#E8E4DD;
   display:flex;justify-content:center;align-items:center;
   min-height:100vh;overflow:hidden;
 }
+body:has(.app.dark){ background:#0A0A0B }
 .app{
   width:100%;max-width:430px;height:100vh;height:100dvh;
   background:var(--bg);
   display:flex;flex-direction:column;
   position:relative;overflow:hidden;
+  margin:0 auto;
+  box-shadow:0 0 0 transparent;
+  transition:max-width 0.3s ease,box-shadow 0.3s ease;
+}
+
+/* ── TABLET (iPad portrait & small laptops) ─────────────────────────────── */
+@media (min-width: 768px) {
+  body { background:#E8E4DD; display:flex; align-items:center; justify-content:center; }
+  .app.dark body, body:has(.app.dark) { background:#0F0F10; }
+  .app{
+    max-width:600px;
+    height:90vh;
+    max-height:920px;
+    border-radius:24px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.18),0 4px 16px rgba(0,0,0,0.08);
+    border:1px solid rgba(0,0,0,0.06);
+  }
+  .app.dark{
+    box-shadow:0 20px 60px rgba(0,0,0,0.5),0 4px 16px rgba(0,0,0,0.3);
+    border-color:rgba(255,255,255,0.05);
+  }
+  .status-bar-space{min-height:0 !important}
+}
+
+/* ── DESKTOP / PC ──────────────────────────────────────────────────────── */
+@media (min-width: 1100px) {
+  body { background:#EEEAE3; padding:24px; }
+  body:has(.app.dark) { background:#0A0A0B; }
+  /* The sidebar is a sibling of .app, so use body-level grid */
+  body{
+    display:grid !important;
+    grid-template-columns:280px 1fr;
+    grid-template-rows:1fr;
+    gap:0;
+    padding:24px;
+    align-items:stretch;
+    justify-content:center;
+    max-width:1000px;
+    margin:0 auto;
+    height:calc(100vh - 48px);
+  }
+  .app{
+    max-width:none;
+    width:100%;
+    height:100%;
+    border-radius:28px 0 0 28px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.2),0 8px 24px rgba(0,0,0,0.1);
+    border:1px solid rgba(0,0,0,0.06);
+    border-right:none;
+    overflow:hidden;
+  }
+  .app.dark{
+    box-shadow:0 30px 80px rgba(0,0,0,0.6),0 8px 24px rgba(0,0,0,0.4);
+    border-color:rgba(255,255,255,0.06);
+  }
+  /* Show sidebar inline on desktop (no slide-in) */
+  .sidebar{
+    order:1;
+    position:relative !important;
+    left:auto !important;top:auto !important;bottom:auto !important;right:auto !important;
+    width:280px !important;max-width:none !important;
+    height:100% !important;
+    transform:translateX(0) !important;
+    border-right:1px solid var(--border) !important;
+    border-radius:28px 0 0 28px !important;
+    background:var(--surface) !important;
+    box-shadow:none !important;
+    transition:none !important;
+  }
+  .app{order:2; border-radius:0 28px 28px 0 !important; border-left:none !important}
+  .sidebar.open{transform:translateX(0) !important}
+  .scrim{display:none !important}
+  .sidebar-close{display:none !important}
+  /* Hide menu button on desktop (sidebar is always visible) */
+  .menu-btn{ display:none !important }
+  /* Make header slightly bigger on desktop */
+  .header{padding:14px 20px !important}
+  .chat-area{padding:20px !important}
+}
+
+/* ── ULTRA-WIDE ───────────────────────────────────────────────────────── */
+@media (min-width: 1600px) {
+  body{max-width:1180px}
+  body .app{border-radius:32px}
+  body .sidebar{border-radius:32px 0 0 32px !important}
+}
+
+/* ── ULTRA-WIDE ───────────────────────────────────────────────────────── */
+@media (min-width: 1600px) {
+  .app{max-width:1050px}
 }
 .app.dark{
   --bg:#1A1A1A;
