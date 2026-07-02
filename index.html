@@ -1848,11 +1848,10 @@ function renderIntegrations(){
         <div class="integ-right">
           ${def.group ? `<span class="badge badge-group">${esc(def.group)}</span>` : ''}
           <label class="toggle" onclick="e=>e.stopPropagation()">
-            <input type="checkbox" ${isEnabled ? 'checked' : ''} onchange="toggleIntegEnabled('${def.id}', this.checked)">
+            <input type="checkbox" ${isEnabled ? 'checked' : ''} ${hasKey ? '' : 'disabled'} onchange="toggleIntegEnabled('${def.id}', this.checked)">
             <div class="toggle-track"></div>
             <div class="toggle-thumb"></div>
           </label>
-          <span class="badge ${isEnabled ? 'badge-ready' : 'badge-off'}">${isEnabled ? 'READY' : 'OFF'}</span>
           <span class="chevron">&#9662;</span>
         </div>
       </div>
@@ -2408,6 +2407,8 @@ function loadChat(i){
     chat.messages.forEach(m => addMsg(m.role, m.content));
     S.messages = [...chat.messages];
   }
+  // clear sidebar before re-rendering to avoid duplicate lists
+  sidebarContent.innerHTML = '';
   renderChats();
 }
 
