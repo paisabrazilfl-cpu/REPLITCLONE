@@ -77,7 +77,17 @@ body.theme-dark, body:has(.app.dark){ background:#0A0A0B }
   --fs-sm:clamp(12px, 0.4vw + 11px, 14px);
 }
 
-/* ── MOBILE (≤640px) ─────────────────────────────────────────────────── */
+/* ── AUTH GATE FADE ─────────────────────────────────────────────────────── */
+#authGate{transition:opacity 0.4s ease}
+#authGate.hidden{opacity:0;pointer-events:none}
+.app{transition:opacity 0.5s ease}
+.app.revealed{visibility:visible !important;opacity:1}
+.app.hiding{visibility:visible;opacity:0}
+
+/* Override: gate forces dark mode */
+body.gate-active{background:#000 !important}
+
+
 /* Base styles already target mobile-first. Just enforce touch targets. */
 @media (max-width: 640px){
   /* Inspector panel: hidden on mobile (Claude Code: panels collapse, don't disappear) */
@@ -1193,8 +1203,33 @@ body.theme-dark,
 </style>
 
 </head>
-<body>
-<div class="app" id="app">
+<body class="theme-dark">
+<!-- ── AUTH GATE (shown until Google sign-in completes) ────────────────── -->
+<div id="authGate" style="position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px">
+  <div style="text-align:center;max-width:420px;width:100%">
+    <!-- Logo emblem top -->
+    <div id="gateLogo" style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#1a1a1a,#0a0a0a);border:2px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:0 0 40px rgba(234,88,12,0.15)">
+      <span style="font-family:'Times New Roman',serif;font-size:42px;font-weight:700;color:#E05C2A;letter-spacing:-2px">CC</span>
+    </div>
+    <h1 style="font-size:34px;font-weight:600;color:#F0EFEC;margin-bottom:8px;letter-spacing:-0.5px">Welcome to Claw Code</h1>
+    <p style="font-size:15px;color:#A8A29E;margin-bottom:40px;line-height:1.5">Sign in with Google to access your encrypted AI workspace,<br>chats, and API keys.</p>
+    <!-- Google sign-in button rendered here -->
+    <div id="gateGoogleBtn" style="display:inline-block;margin-bottom:24px"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#6B6560;font-size:12px">
+      <div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div>
+      <span>SECURE • END-TO-END</span>
+      <div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:24px;margin-top:24px;color:#6B6560;font-size:11px">
+      <span>&#128274; Encrypted keys</span>
+      <span>&#9729; Cloud sync</span>
+      <span>&#10024; Multi-model</span>
+    </div>
+    <p style="font-size:11px;color:#6B6560;margin-top:32px">By signing in you agree to basic terms. We only store your email and name.</p>
+  </div>
+</div>
+
+<div class="app" id="app" style="visibility:hidden">
 
   <div class="status-bar-space"></div>
 
@@ -2974,6 +3009,29 @@ function showUserMenu(){
 }
 function closeUserMenu(){ document.getElementById('userMenuModal').classList.remove('open') }
 
+function initGoogleGate(){
+  if (!window.google || !google.accounts || !google.accounts.id) return;
+  try {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleLogin,
+      auto_select: false,
+      cancel_on_tap_outside: false,
+    });
+    const btn = document.getElementById('gateGoogleBtn');
+    if (btn) {
+      btn.innerHTML = '';
+      google.accounts.id.renderButton(btn, {
+        theme: 'filled_black',
+        size: 'large',
+        text: 'signin_with',
+        shape: 'pill',
+        width: 320,
+      });
+    }
+  } catch(e) { console.warn('Gate button init failed:', e.message); }
+}
+
 function initGoogleButton(){
   if (!window.google || !google.accounts || !google.accounts.id) return;
   try {
@@ -3109,6 +3167,30 @@ function logout(){
 function updateAuthUI(){
   const loginBtn = document.getElementById('loginBtn');
   const userSlot = document.getElementById('userSlot');
+  const gate = document.getElementById('authGate');
+  const app = document.getElementById('app');
+  // If we have a logged-in user, hide the gate and reveal the app
+  if (authUser) {
+    if (gate) {
+      gate.classList.add('hidden');
+      setTimeout(() => { gate.style.display = 'none'; }, 500);
+    }
+    if (app) {
+      app.classList.remove('hiding');
+      app.classList.add('revealed');
+    }
+    document.body.classList.remove('gate-active');
+    populateModelDropdown();
+    updateInspector();
+  } else {
+    // User signed out — show the gate again
+    if (gate) gate.style.display = 'flex';
+    if (app) {
+      app.classList.remove('revealed');
+      app.classList.add('hiding');
+    }
+    document.body.classList.add('gate-active');
+  }
   if (authUser) {
     loginBtn.style.display = 'none';
     userSlot.style.display = 'flex';
@@ -3124,6 +3206,12 @@ function updateAuthUI(){
   }
 }
 
+// Hard auth gate: hide everything until signed in
+document.body.classList.add('gate-active');
+const _gateEl = document.getElementById('authGate');
+const _appEl = document.getElementById('app');
+if (_appEl) { _appEl.style.visibility = 'hidden'; }
+
 loadState();
 applyDarkMode();
 populateModelDropdown();
@@ -3131,7 +3219,16 @@ updateInspector();
 inspectorCheckHealth();
 updateAuthUI();
 refreshAuth();
-setTimeout(initGoogleButton, 500);
+
+// Render Google button INSIDE the gate (not the header modal)
+setTimeout(() => {
+  if (!window.google || !google.accounts || !google.accounts.id) {
+    setTimeout(initGoogleGate, 400);
+    return;
+  }
+  initGoogleGate();
+}, 300);
+setTimeout(initGoogleGate, 800);
 setInterval(inspectorCheckHealth, 30000);  // re-check every 30s
 if (S.messages.length > 0) {
   welcome.style.display = 'none';
