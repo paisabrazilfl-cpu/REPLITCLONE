@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-<title>Claw Code v2</title>
+<title>Lizzy — AI Coding Assistant</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
@@ -1209,10 +1209,10 @@ body.theme-dark,
   <div style="text-align:center;max-width:420px;width:100%">
     <!-- Logo emblem top -->
     <div id="gateLogo" style="width:120px;height:120px;border-radius:50%;overflow:hidden;margin:0 auto 28px;box-shadow:0 0 50px rgba(234,88,12,0.2);border:2px solid rgba(255,255,255,0.06)">
-      <img src="gecko-mascot.png" alt="Claw Code" style="width:100%;height:100%;object-fit:cover;display:block"/>
+      <img src="gecko-mascot.png" alt="Lizzy" style="width:100%;height:100%;object-fit:cover;display:block"/>
     </div>
-    <h1 style="font-size:34px;font-weight:600;color:#F0EFEC;margin-bottom:8px;letter-spacing:-0.5px">Welcome to Claw Code</h1>
-    <p style="font-size:15px;color:#A8A29E;margin-bottom:40px;line-height:1.5">Sign in with Google to access your encrypted AI workspace,<br>chats, and API keys.</p>
+    <h1 style="font-size:34px;font-weight:600;color:#F0EFEC;margin-bottom:8px;letter-spacing:-0.5px">Welcome to Lizzy</h1>
+    <p style="font-size:15px;color:#A8A29E;margin-bottom:40px;line-height:1.5">Sign in to unlock Lizzy — your encrypted AI coding workspace.<br>Multi-model chat, code sandbox, and per-user API key vault.</p>
     <!-- Google sign-in button rendered here -->
     <div id="gateGoogleBtn" style="display:inline-block;margin-bottom:24px"></div>
     <div style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#6B6560;font-size:12px">
@@ -1309,8 +1309,8 @@ body.theme-dark,
       <div class="welcome-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
       </div>
-      <h2>Claw Code</h2>
-      <div id="buildStamp" style="font-size:10px;color:var(--text-3);opacity:0.55;letter-spacing:0.5px;margin-top:-6px">v2.1 · 2026-07-02</div>
+      <h2>Lizzy</h2>
+      <div id="buildStamp" style="font-size:10px;color:var(--text-3);opacity:0.55;letter-spacing:0.5px;margin-top:-6px">Lizzy · v1.0 · 2026-07-02</div>
       <p>A powerful AI coding assistant that writes, reviews, and executes code.</p>
       <div class="welcome-features">
         <button class="welcome-feat" onclick="quickPrompt('Write a Python function to sort a list')">&#128187; Write code</button>
@@ -1332,7 +1332,7 @@ body.theme-dark,
     </div>
     <div class="input-row">
       <div class="input-wrap">
-        <textarea id="msgInput" rows="1" placeholder="Message Claw Code..."></textarea>
+        <textarea id="msgInput" rows="1" placeholder="Message Lizzy..."></textarea>
       </div>
       <button class="send-btn" id="sendBtn" disabled aria-label="Send">
         <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
@@ -1365,7 +1365,7 @@ body.theme-dark,
       <div class="sidebar-logo-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
       </div>
-      <span class="sidebar-logo-text">Claw Code</span>
+      <span class="sidebar-logo-text">Lizzy</span>
     </div>
     <button class="sidebar-close" id="sidebarClose">
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -1478,7 +1478,7 @@ body.theme-dark,
 <div class="modal-overlay" id="authModal">
   <div class="modal" style="max-width:380px;text-align:center;padding:32px 24px">
     <div style="font-size:42px;margin-bottom:8px">&#128274;</div>
-    <div class="modal-title" style="font-size:20px;margin-bottom:6px">Sign in to Claw Code</div>
+    <div class="modal-title" style="font-size:20px;margin-bottom:6px">Sign in to Lizzy</div>
     <div class="modal-desc" style="margin-bottom:24px">Save your chats, API keys, and settings across devices.</div>
     <div id="googleBtn" style="display:inline-block;margin-bottom:16px"></div>
     <div style="font-size:11px;color:var(--text-3);margin-top:8px">By signing in, you agree to our basic terms. We only store your email and name.</div>
@@ -1963,11 +1963,11 @@ document.querySelectorAll('.mode-tab').forEach(tab => {
       chatArea.style.display = 'flex';
     }
     msgInput.placeholder = {
-      chat:'Message Claw Code...', code:'Describe what code you need...',
+      chat:'Message Lizzy...', code:'Describe what code you need...',
       image:'Describe the image you want to generate...',
       video:'Describe the video you want to create...',
       vision:'Describe what you see, or paste an image URL...',
-    }[S.mode] || 'Message Claw Code...';
+    }[S.mode] || 'Message Lizzy...';
   });
 });
 
@@ -2054,7 +2054,7 @@ async function codeReply(userPrompt) {
 async function aiReply(userText){
   S.typing = true;
   const typingId = addTyping();
-  const systemPrompt = `You are Claw Code, a helpful AI coding assistant. You have access to tools. Use them when needed — especially for web search, code execution, or API calls. Be concise, friendly, and practical. Use code blocks for code.`;
+  const systemPrompt = `You are Lizzy, a helpful AI coding assistant. You have access to tools. Use them when needed — especially for web search, code execution, or API calls. Be concise, friendly, and practical. Use code blocks for code.`;
   const history = S.messages.slice(-12).map(m => ({role: m.role, content: m.content}));
 
   try {
@@ -2128,7 +2128,7 @@ async function aiReply(userText){
 
 async function codeFromPrompt(prompt){
   const lang = detectLang(prompt);
-  const code = `// Generated by Claw Code\n// Language: ${lang}\n// Prompt: ${prompt}\n\nconsole.log("Hello from ${lang}!");`;
+  const code = `// Generated by Lizzy\n// Language: ${lang}\n// Prompt: ${prompt}\n\nconsole.log("Hello from ${lang}!");`;
   codeText.value = code;
   document.querySelector('[data-mode="code"]').click();
   addMsg('ai', `Here's a ${lang} snippet for your request:\n\`\`\`${lang}\n${code}\n\`\`\`\n\nI've loaded it into the Code editor — hit Run to execute it!`);
@@ -2196,7 +2196,7 @@ function addMsg(role, content){
   el.innerHTML = `
     <div class="msg-header">
       <div class="msg-avatar">${role === 'user' ? 'U' : '✦'}</div>
-      <span class="msg-name">${role === 'user' ? 'You' : 'Claw Code'}</span>
+      <span class="msg-name">${role === 'user' ? 'You' : 'Lizzy'}</span>
     </div>
     <div class="msg-bubble">${formatted}</div>
     ${role === 'user' ? `<button class="msg-copy" onclick="copyMsg(this)">Copy</button>` : ''}
@@ -2215,7 +2215,7 @@ function addTyping(){
   el.innerHTML = `
     <div class="msg-header">
       <div class="msg-avatar">✦</div>
-      <span class="msg-name">Claw Code</span>
+      <span class="msg-name">Lizzy</span>
     </div>
     <div class="typing" style="padding:10px 14px"><span></span><span></span><span></span></div>
   `;
@@ -2976,7 +2976,7 @@ function renderMyCode(){
 
 // ── COPY SESSION ──────────────────────────────────────────────────────────────
 document.getElementById('copyBtn').onclick = () => {
-  const text = S.messages.map(m => `${m.role === 'user' ? 'You' : 'Claw Code'}: ${m.content}`).join('\n\n');
+  const text = S.messages.map(m => `${m.role === 'user' ? 'You' : 'Lizzy'}: ${m.content}`).join('\n\n');
   if (!text) { showToast('Nothing to copy yet!', 'info'); return; }
   navigator.clipboard.writeText(text).then(() => showToast('Session copied!', 'success'));
 };
