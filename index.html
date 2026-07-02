@@ -1613,9 +1613,53 @@ async function sendMsg(){
   const text = msgInput.value.trim();
   if (!text || S.typing) return;
   msgInput.value = ''; msgInput.style.height = 'auto'; sendBtn.disabled = true;
-  addMsg('user', text);
-  saveState();
-  await aiReply(text);
+
+  if (S.mode === 'code') {
+    await codeReply(text);
+  } else {
+    addMsg('user', text);
+    saveState();
+    await aiReply(text);
+  }
+}
+
+// ── CODE GENERATION ───────────────────────────────────────────────────────────
+async function codeReply(userPrompt) {
+  S.typing = true;
+  codeOutput.innerHTML = '<span style="color:var(--accent);font-size:12px">&#9889; Generating code...</span>';
+
+  const systemPrompt = `You are an expert code writer. The user describes what they want built. Respond ONLY with the complete code — no explanations, no markdown outside code blocks. Use triple backticks with the appropriate language tag. For example: \`\`\`python\n# code here\n\`\`\`. Do not include any text before or after the code block except the code itself.`;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: S.model,
+        messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
+        enabledTools: S.enabledTools,
+      })
+    });
+    const data = await res.json();
+    const raw = data.reply || '';
+
+    // Extract code from markdown code blocks
+    const match = raw.match(/```(?:\w+)?\n?([\s\S]*?)```/);
+    const code = match ? match[1].trim() : raw.trim();
+
+    if (code && code.length > 10) {
+      codeText.value = code;
+      codeOutput.innerHTML = '<span style="color:#22c55e;font-size:12px">&#10003; Code generated — press ▶ Run to execute</span>';
+    } else if (raw) {
+      codeText.value = raw;
+      codeOutput.innerHTML = '<span style="color:#EAB308;font-size:12px">&#9888; No code block found — raw text used</span>';
+    } else {
+      codeOutput.innerHTML = '<span style="color:#ef4444;font-size:12px">&#10060; No response from AI</span>';
+    }
+  } catch(e) {
+    codeOutput.innerHTML = '<span style="color:#ef4444;font-size:12px">&#10060; Error: ' + esc(e.message) + '</span>';
+  }
+  S.typing = false;
 }
 
 // ── AI REPLY ──────────────────────────────────────────────────────────────────
