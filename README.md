@@ -50,6 +50,28 @@ The AI assistant calls the Anthropic API directly from the browser. To use it:
 
 > Note: The API key must be configured server-side or via a proxy for production use. This demo uses the Claude.ai artifact API bridge.
 
+## Deployment
+
+### Render (Production)
+
+The backend is deployed as a Node.js Web Service on Render with a persistent volume for SQLite data.
+
+- **Live URL**: https://replit-clone.onrender.com
+- **Auto-deploys**: Every push to `main` triggers a new Render build.
+- **Persistent storage**: SQLite DB mounted at `/app/backend/data` (survives redeploys).
+
+To deploy manually:
+1. Push to GitHub.
+2. Render auto-detects `render.yaml` and deploys.
+
+To set up Render manually:
+- Connect the GitHub repo to Render.
+- Set root directory to repo root (`/`).
+- Build command: `cd backend && npm install && npm rebuild better-sqlite3`
+- Start command: `cp index.html backend/index.html && cd backend && node server.js`
+- Add a persistent disk (1GB) mounted at `/app/backend/data`.
+- Set `PORT` env var to `10000` (or Render's `$PORT`).
+
 ## License
 
 MIT
