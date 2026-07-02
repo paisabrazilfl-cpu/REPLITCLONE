@@ -43,7 +43,7 @@ body{
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
 }
-body:has(.app.dark){ background:#0A0A0B }
+body.theme-dark, body:has(.app.dark){ background:#0A0A0B }
 .app{
   width:100%;max-width:430px;height:100vh;height:100dvh;
   background:var(--bg);
@@ -207,6 +207,7 @@ body:has(.app.dark){ background:#0A0A0B }
 @media (min-width: 1600px){
   body{max-width:1500px}
 }
+body.theme-dark,
 .app.dark{
   --bg:#1A1A1A;
   --surface:#252525;
@@ -300,13 +301,21 @@ body:has(.app.dark){ background:#0A0A0B }
 .msg-copy:active{opacity:0.5}
 
 /* ── WELCOME ──────────────────────────────────────────────────────────────── */
-.welcome{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:12px}
-.welcome-icon{width:56px;height:56px;border-radius:16px;background:var(--accent);display:flex;align-items:center;justify-content:center}
-.welcome-icon svg{width:28px;height:28px;fill:#fff}
-.welcome h2{font-size:18px;font-weight:700;color:var(--text)}
-.welcome p{font-size:13px;color:var(--text-2);line-height:1.5;max-width:260px}
-.welcome-features{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:4px}
-.welcome-feat{background:#FFFFFF;border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--text-2)}
+.welcome{text-align:center;padding:32px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:520px;margin:0 auto}
+.welcome-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#C2410C);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(234,88,12,0.25)}
+.welcome-icon svg{width:24px;height:24px;fill:#fff}
+.welcome h2{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.3px;margin-top:4px}
+.welcome p{font-size:13px;color:var(--text-2);line-height:1.5;max-width:320px}
+.welcome-features{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.welcome-feat{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:8px 14px;font-size:12px;font-weight:500;
+  color:var(--text-2);cursor:pointer;font-family:var(--font);
+  transition:all 0.15s ease;
+}
+.welcome-feat:hover{border-color:var(--accent);color:var(--text);transform:translateY(-1px)}
+.app.dark .welcome-feat{background:#2A2A2A;border-color:#3A3A3A}
+.app.dark .welcome-feat:hover{background:#333}
 
 /* ── INPUT BAR ────────────────────────────────────────────────────────────── */
 .input-bar{
@@ -1236,8 +1245,8 @@ body:has(.app.dark){ background:#0A0A0B }
     </div>
     <div class="header-right">
       <div id="authSlot">
-        <button class="hdr-btn" id="loginBtn" onclick="showAuthModal()" title="Sign in with Google" style="display:flex;align-items:center;gap:5px;padding:6px 10px">
-          <svg width="14" height="14" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 19.5-20z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 18.9 12 24 12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.5-5.2l-6.2-5.2C29.1 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.3 5.6l6.2 5.2C40.9 36 44 30.4 44 24c0-1.2-.1-2.4-.4-3.5z"/></svg>
+        <button class="hdr-btn" id="loginBtn" onclick="showAuthModal()" title="Sign in with Google" style="display:flex;align-items:center;gap:5px;padding:6px 10px;white-space:nowrap">
+          <svg width="14" height="14" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 19.5-20z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 18.9 12 24 12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.5-5.2l-6.2-5.2C29.1 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.3 5.6l6.2 5.2C40.9 36 44 30.4 44 24c0-1.2-.1-2.4-.4-3.5z"/></svg>
           <span style="font-size:12px;font-weight:600">Sign in</span>
         </button>
         <div id="userSlot" style="display:none;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;cursor:pointer;background:rgba(0,0,0,0.04)" onclick="showUserMenu()">
@@ -1261,13 +1270,12 @@ body:has(.app.dark){ background:#0A0A0B }
         <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
       </div>
       <h2>Claw Code</h2>
-      <p>A powerful AI coding assistant that writes, reviews, and executes code — all in one place.</p>
+      <p>A powerful AI coding assistant that writes, reviews, and executes code.</p>
       <div class="welcome-features">
-        <span class="welcome-feat">Chat</span>
-        <span class="welcome-feat">Code</span>
-        <span class="welcome-feat">Image</span>
-        <span class="welcome-feat">Vision</span>
-        <span class="welcome-feat">Video</span>
+        <button class="welcome-feat" onclick="quickPrompt('Write a Python function to sort a list')">&#128187; Write code</button>
+        <button class="welcome-feat" onclick="quickPrompt('Explain this code: ')">&#128269; Explain code</button>
+        <button class="welcome-feat" onclick="quickPrompt('Generate an image of ')">&#127912; Generate image</button>
+        <button class="welcome-feat" onclick="quickPrompt('Search the web for ')">&#128269; Web search</button>
       </div>
     </div>
   </div>
@@ -1798,10 +1806,12 @@ function applyDarkMode(){
   const app = document.getElementById('app');
   if (S.darkMode) {
     app.classList.add('dark');
-    document.getElementById('themeLabel').textContent = 'Light';
+    document.body.classList.add('theme-dark');
+    const t = document.getElementById('themeLabel'); if (t) t.textContent = 'Light';
   } else {
     app.classList.remove('dark');
-    document.getElementById('themeLabel').textContent = 'Dark';
+    document.body.classList.remove('theme-dark');
+    const t = document.getElementById('themeLabel'); if (t) t.textContent = 'Dark';
   }
 }
 
@@ -2393,6 +2403,19 @@ window.testApiKey = async function(){
     btn.classList.remove('testing');
     btn.textContent = '✦ Test Connection';
   }
+};
+
+window.quickPrompt = function(prefix){
+  const input = document.getElementById('msgInput');
+  input.value = prefix;
+  input.focus();
+  // Move cursor to end
+  setTimeout(() => {
+    input.setSelectionRange(input.value.length, input.value.length);
+  }, 10);
+  // Auto-expand textarea
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 100) + 'px';
 };
 
 window.saveApiKey = function(){
