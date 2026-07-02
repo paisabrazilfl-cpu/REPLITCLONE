@@ -1213,8 +1213,14 @@ body.theme-dark,
     </div>
     <h1 style="font-size:34px;font-weight:600;color:#F0EFEC;margin-bottom:8px;letter-spacing:-0.5px">Welcome to Lizzy</h1>
     <p style="font-size:15px;color:#A8A29E;margin-bottom:40px;line-height:1.5">Sign in to unlock Lizzy — your encrypted AI coding workspace.<br>Multi-model chat, code sandbox, and per-user API key vault.</p>
-    <!-- Google sign-in button rendered here -->
-    <div id="gateGoogleBtn" style="display:inline-block;margin-bottom:24px"></div>
+    <!-- Google sign-in button: GIS-rendered OR fallback -->
+    <div id="gateGoogleBtn" style="display:inline-block;margin-bottom:24px;min-height:46px">
+      <!-- Fallback button — always visible even if GIS script is slow/blocked -->
+      <a id="gateGoogleFallback" href="https://accounts.google.com/o/oauth2/v2/auth?client_id=395793805906-ra3qk9a038fm2o0n74c1jipfoh88riea.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Freplit-clone-07jy.onrender.com%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=openid+email+profile&prompt=select_account" target="_self" style="display:inline-flex;align-items:center;gap:10px;background:#131314;color:#E3E3E3;border:1px solid #8E918F;border-radius:20px;padding:11px 24px;font:600 14px/1 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;text-decoration:none;cursor:pointer;transition:all 0.15s">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 19.5-20z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 18.9 12 24 12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.5-5.2l-6.2-5.2C29.1 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.3 5.6l6.2 5.2C40.9 36 44 30.4 44 24c0-1.2-.1-2.4-.4-3.5z"/></svg>
+        <span>Sign in with Google</span>
+      </a>
+    </div>
     <div style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#6B6560;font-size:12px">
       <div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div>
       <span>SECURE • END-TO-END</span>
@@ -1225,7 +1231,13 @@ body.theme-dark,
       <span>&#9729; Cloud sync</span>
       <span>&#10024; Multi-model</span>
     </div>
-    <p style="font-size:11px;color:#6B6560;margin-top:32px">By signing in you agree to basic terms. We only store your email and name.</p>
+    <p style="font-size:11px;color:#6B6560;margin-top:32px;line-height:1.6">By signing in, you agree to our <a onclick="showLegal('privacy')" style="color:#E05C2A;cursor:pointer;text-decoration:underline">Privacy Policy</a> and <a onclick="showLegal('terms')" style="color:#E05C2A;cursor:pointer;text-decoration:underline">Terms of Service</a>.<br>We only store your email, name, and encrypted API keys.</p>
+    <div style="display:flex;justify-content:center;gap:20px;margin-top:16px;font-size:11px">
+      <a onclick="showLegal('privacy')" style="color:#6B6560;cursor:pointer">Privacy</a>
+      <a onclick="showLegal('terms')" style="color:#6B6560;cursor:pointer">Terms</a>
+      <a onclick="showLegal('cookies')" style="color:#6B6560;cursor:pointer">Cookies</a>
+      <a onclick="showLegal('dmca')" style="color:#6B6560;cursor:pointer">DMCA</a>
+    </div>
   </div>
 </div>
 
@@ -1483,6 +1495,22 @@ body.theme-dark,
     <div id="googleBtn" style="display:inline-block;margin-bottom:16px"></div>
     <div style="font-size:11px;color:var(--text-3);margin-top:8px">By signing in, you agree to our basic terms. We only store your email and name.</div>
     <button class="btn-3d" onclick="closeAuthModal()" style="margin-top:20px;width:100%">Maybe later</button>
+  </div>
+</div>
+
+<!-- Legal Modal (Privacy + Terms) -->
+<div class="modal-overlay" id="legalModal">
+  <div class="modal" style="max-width:520px;max-height:85vh;display:flex;flex-direction:column">
+    <div class="modal-header" style="padding:20px;border-bottom:1px solid var(--border)">
+      <div class="modal-title" id="legalTitle" style="font-size:18px">Privacy Policy</div>
+      <button class="modal-close" onclick="closeLegalModal()">&times;</button>
+    </div>
+    <div id="legalContent" style="padding:20px;overflow-y:auto;font-size:13px;line-height:1.7;color:var(--text-2)">
+    </div>
+    <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--text-3)">
+      <span>Last updated: July 2, 2026</span>
+      <button class="btn-3d" onclick="closeLegalModal()" style="padding:6px 14px">Close</button>
+    </div>
   </div>
 </div>
 
@@ -2991,6 +3019,61 @@ document.addEventListener('keydown', e => {
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 
+// ── LEGAL MODALS ──────────────────────────────────────────────────────────────
+const LEGAL_CONTENT = {
+  privacy: `<h3 style="color:var(--text);margin:0 0 12px;font-size:16px">Privacy Policy</h3>
+    <p><strong>What we collect:</strong> Your email address, display name, profile picture (from Google). Encrypted API keys you choose to store. Your chat history and configuration preferences.</p>
+    <p><strong>How we use it:</strong> To authenticate you, to call AI providers on your behalf, to sync your settings across devices, and to remember your chats.</p>
+    <p><strong>Encryption:</strong> Your API keys are encrypted with AES-256-GCM using a master key. We cannot read your API keys — only decrypt them at request time when you are signed in.</p>
+    <p><strong>Sharing:</strong> We never sell or share your data. AI providers (OpenAI, Anthropic, Google, etc.) receive your prompts directly when you send them.</p>
+    <p><strong>You can delete your account</strong> and all associated data at any time by signing out and emailing us at <a href="mailto:privacy@lizzy.app" style="color:#E05C2A">privacy@lizzy.app</a>.</p>
+    <p><strong>Cookies:</strong> We use essential cookies only for authentication. No tracking, no analytics, no third-party cookies.</p>
+    <p><strong>Contact:</strong> <a href="mailto:privacy@lizzy.app" style="color:#E05C2A">privacy@lizzy.app</a></p>`,
+
+  terms: `<h3 style="color:var(--text);margin:0 0 12px;font-size:16px">Terms of Service</h3>
+    <p><strong>1. Acceptance.</strong> By using Lizzy you agree to these terms.</p>
+    <p><strong>2. Service.</strong> Lizzy is an AI coding assistant. You are responsible for the code you write and the actions you take using the service.</p>
+    <p><strong>3. Accounts.</strong> You must sign in with a valid Google account. You are responsible for activity under your account.</p>
+    <p><strong>4. AI-Generated Content.</strong> Lizzy uses third-party AI providers (OpenAI, Anthropic, Google, etc.). Output may contain errors. Always review code before running it.</p>
+    <p><strong>5. API Keys.</strong> You are responsible for the API keys you store. We encrypt them at rest, but you must comply with each provider's terms of service.</p>
+    <p><strong>6. Acceptable Use.</strong> No illegal content, no attempts to harm others, no abuse of AI provider quotas. We may suspend accounts that violate this.</p>
+    <p><strong>7. No Warranty.</strong> The service is provided "as is" without warranties of any kind.</p>
+    <p><strong>8. Limitation of Liability.</strong> We are not liable for any damages arising from your use of the service.</p>
+    <p><strong>9. Changes.</strong> We may update these terms with notice. Continued use constitutes acceptance.</p>
+    <p><strong>10. Contact:</strong> <a href="mailto:legal@lizzy.app" style="color:#E05C2A">legal@lizzy.app</a></p>`,
+
+  cookies: `<h3 style="color:var(--text);margin:0 0 12px;font-size:16px">Cookie Policy</h3>
+    <p>Cookies are small files stored on your device.</p>
+    <p><strong>What we use:</strong> We use a single JWT (JSON Web Token) stored in your browser's <code>localStorage</code>, not as a traditional cookie. This token proves your identity to the server.</p>
+    <p><strong>Third parties:</strong> None. We don't use Google Analytics, Facebook Pixel, or any other tracking services.</p>
+    <p><strong>Your controls:</strong> You can clear your browser's localStorage at any time to sign yourself out.</p>
+    <p><strong>Necessary:</strong> Lizzy cannot function without this token — it is required for authentication.</p>`,
+
+  dmca: `<h3 style="color:var(--text);margin:0 0 12px;font-size:16px">DMCA Notice</h3>
+    <p>If you believe content hosted on Lizzy infringes your copyright, send a DMCA takedown notice to:</p>
+    <p style="margin:12px 0"><a href="mailto:dmca@lizzy.app" style="color:#E05C2A">dmca@lizzy.app</a></p>
+    <p><strong>Required information:</strong></p>
+    <p>• Identification of the copyrighted work<br>• URL of the infringing content<br>• Your contact info (name, email, address)<br>• A statement that you have a good-faith belief the use is unauthorized<br>• A statement, under penalty of perjury, that the information is accurate<br>• Your physical or electronic signature</p>
+    <p>We will process valid notices within 5 business days.</p>`
+};
+
+function showLegal(type){
+  const modal = document.getElementById('legalModal');
+  const title = document.getElementById('legalTitle');
+  const content = document.getElementById('legalContent');
+  const titles = { privacy: 'Privacy Policy', terms: 'Terms of Service', cookies: 'Cookie Policy', dmca: 'DMCA Notice' };
+  title.textContent = titles[type] || 'Legal';
+  content.innerHTML = LEGAL_CONTENT[type] || '';
+  modal.classList.add('open');
+  // Close the user menu if it's open
+  const um = document.getElementById('userMenuModal');
+  if (um) um.classList.remove('open');
+}
+
+function closeLegalModal(){
+  document.getElementById('legalModal').classList.remove('open');
+}
+
 // ── AUTH (Google OAuth + JWT) ─────────────────────────────────────────────────
 let authUser = null;
 let authToken = localStorage.getItem('cc_jwt') || null;
@@ -3021,6 +3104,8 @@ function initGoogleGate(){
     const btn = document.getElementById('gateGoogleBtn');
     if (btn) {
       btn.innerHTML = '';
+      const fb = document.getElementById('gateGoogleFallback');
+      if (fb) fb.style.display = 'none';
       google.accounts.id.renderButton(btn, {
         theme: 'filled_black',
         size: 'large',

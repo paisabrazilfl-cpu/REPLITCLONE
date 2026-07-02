@@ -784,6 +784,56 @@ app.post('/auth/google', async (req, res) => {
   }
 });
 
+// OAuth2 callback: receives ?code from Google, exchanges for id_token
+// Used by the fallback "Sign in with Google" link in the auth gate
+app.get('/auth/google/callback', async (req, res) => {
+  const code = req.query.code;
+  if (!code) return res.status(400).send('Missing code');
+  try {
+    // Exchange code for tokens
+    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: 'https://replit-clone-07jy.onrender.com/auth/google/callback',
+        grant_type: 'authorization_code',
+      }),
+    });
+    const tokens = await tokenRes.json();
+    if (!tokens.id_token) {
+      return res.status(400).send('Token exchange failed: ' + JSON.stringify(tokens).slice(0, 200));
+    }
+    // Verify the id_token
+    const profile = await verifyGoogleIdToken(tokens.id_token);
+    // Upsert user
+    const userId = 'u_' + profile.google_id;
+    const now = Math.floor(Date.now() / 1000);
+    const existing = db.exec(`SELECT * FROM users WHERE google_id = '${profile.google_id.replace(/'/g, "''")}'`);
+    let user;
+    if (existing.length > 0 && existing[0].values.length > 0) {
+      user = { id: userId, google_id: profile.google_id, email: profile.email, name: profile.name, picture: profile.picture };
+      db.run(`UPDATE users SET last_seen = ${now} WHERE google_id = '${profile.google_id.replace(/'/g, "''")}'`);
+    } else {
+      db.run(`INSERT INTO users (id, google_id, email, name, picture, created_at, last_seen) VALUES ('${userId}', '${profile.google_id.replace(/'/g, "''")}', '${(profile.email || '').replace(/'/g, "''")}', '${(profile.name || '').replace(/'/g, "''")}', '${(profile.picture || '').replace(/'/g, "''")}', ${now}, ${now})`);
+      user = { id: userId, google_id: profile.google_id, email: profile.email, name: profile.name, picture: profile.picture };
+    }
+    dbDirty = true;
+    const jwtToken = signSession(user);
+    // Return HTML that stores JWT in localStorage and closes the popup (or redirects)
+    res.setHeader('Content-Type', 'text/html');
+    res.send(`<!DOCTYPE html><html><body><script>
+      localStorage.setItem('cc_jwt', ${JSON.stringify(jwtToken)});
+      if (window.opener) { window.opener.location.reload(); window.close(); }
+      else { window.location.href = '/'; }
+    </script><p>Signing you in...</p></body></html>`);
+  } catch (e) {
+    res.status(500).send('OAuth error: ' + e.message);
+  }
+});
+
 // Get current user from JWT (or null if not logged in)
 app.get('/auth/me', (req, res) => {
   if (!req.user) return res.json({ user: null });
