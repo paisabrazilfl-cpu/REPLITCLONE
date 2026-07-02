@@ -1,7 +1,7 @@
 const express = require('express');
 const http = require('http');
 const { WebSocketServer } = require('ws');
-const Database = require('better-sqlite3');
+const initSqlJs = require('sql.js');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -13,25 +13,92 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
-// Ensure data dir exists (mounted persistent volume on Fly.io)
-fs.mkdirSync('./data', { recursive: true });
+const DATA_DIR = './data';
+const DB_PATH  = path.join(DATA_DIR, 'replit.db');
 
-const db = new Database('./data/replit.db');
+fs.mkdirSync(DATA_DIR, { recursive: true });
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS projects (
-    id TEXT PRIMARY KEY,
-    name TEXT DEFAULT 'my-project',
-    created_at INTEGER DEFAULT (strftime('%s','now'))
-  );
-  CREATE TABLE IF NOT EXISTS files (
-    project_id TEXT,
-    name TEXT,
-    content TEXT DEFAULT '',
-    updated_at INTEGER DEFAULT (strftime('%s','now')),
-    PRIMARY KEY (project_id, name)
-  );
-`);
+// ── sql.js wrapper (mimics better-sqlite3 sync API) ─────────────────────────
+
+let db = null;
+let dbDirty = false;
+let saveTimer = null;
+
+async function initDb() {
+  const SQL = await initSqlJs();
+
+  if (fs.existsSync(DB_PATH)) {
+    const buf = fs.readFileSync(DB_PATH);
+    db = new SQL.Database(buf);
+  } else {
+    db = new SQL.Database();
+  }
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS projects (
+      id TEXT PRIMARY KEY,
+      name TEXT DEFAULT 'my-project',
+      created_at INTEGER DEFAULT (strftime('%s','now'))
+    );
+    CREATE TABLE IF NOT EXISTS files (
+      project_id TEXT,
+      name TEXT,
+      content TEXT DEFAULT '',
+      updated_at INTEGER DEFAULT (strftime('%s','now')),
+      PRIMARY KEY (project_id, name)
+    );
+  `);
+
+  // Periodic flush every 10s if dirty
+  saveTimer = setInterval(() => {
+    if (dbDirty) { saveDb(); dbDirty = false; }
+  }, 10_000);
+
+  console.log('[DB] Initialized (sql.js)');
+}
+
+function saveDb() {
+  if (!db) return;
+  const data = db.export();
+  const buf = Buffer.from(data);
+  fs.writeFileSync(DB_PATH, buf);
+}
+
+function closeDb() {
+  if (saveTimer) clearInterval(saveTimer);
+  if (db && dbDirty) saveDb();
+  if (db) db.close();
+}
+
+// ── sql.js helpers (better-sqlite3-like API) ──────────────────────────────────
+
+function dbRun(sql, ...params) {
+  db.run(sql, params);
+  dbDirty = true;
+}
+
+function dbGet(sql, ...params) {
+  const stmt = db.prepare(sql);
+  stmt.bind(params);
+  if (stmt.step()) {
+    const row = stmt.getAsObject();
+    stmt.free();
+    return row;
+  }
+  stmt.free();
+  return undefined;
+}
+
+function dbAll(sql, ...params) {
+  const stmt = db.prepare(sql);
+  stmt.bind(params);
+  const rows = [];
+  while (stmt.step()) rows.push(stmt.getAsObject());
+  stmt.free();
+  return rows;
+}
+
+// ── Middleware ────────────────────────────────────────────────────────────────
 
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '10mb' }));
@@ -42,39 +109,40 @@ app.use(express.static(path.join(__dirname, '..')));
 // ── PROJECTS API ──────────────────────────────────────────────────────────────
 
 app.post('/api/projects', (req, res) => {
-  const id = crypto.randomBytes(5).toString('hex');
+  const id   = crypto.randomBytes(5).toString('hex');
   const name = (req.body && req.body.name) || 'my-project';
-  db.prepare('INSERT OR IGNORE INTO projects (id, name) VALUES (?, ?)').run(id, name);
+  db.run('INSERT OR IGNORE INTO projects (id, name) VALUES (?, ?)', [id, name]);
+  dbDirty = true;
   res.json({ id, name });
 });
 
 app.get('/api/projects/:id', (req, res) => {
-  const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
+  const project = dbGet('SELECT * FROM projects WHERE id = ?', req.params.id);
   if (!project) return res.status(404).json({ error: 'Not found' });
-  const files = db.prepare('SELECT name, content, updated_at FROM files WHERE project_id = ? ORDER BY name').all(req.params.id);
+  const files = dbAll('SELECT name, content, updated_at FROM files WHERE project_id = ? ORDER BY name', req.params.id);
   res.json({ ...project, files });
 });
 
 app.put('/api/projects/:id/files', (req, res) => {
   const files = req.body.files || {};
-  const upsert = db.prepare(`
-    INSERT INTO files (project_id, name, content, updated_at)
-    VALUES (?, ?, ?, strftime('%s','now'))
-    ON CONFLICT(project_id, name) DO UPDATE SET
-      content = excluded.content,
-      updated_at = excluded.updated_at
-  `);
-  db.transaction(() => {
-    for (const [name, content] of Object.entries(files)) {
-      upsert.run(req.params.id, name, content);
-    }
-  })();
+  const now   = Math.floor(Date.now() / 1000);
+  for (const [name, content] of Object.entries(files)) {
+    db.run(`
+      INSERT INTO files (project_id, name, content, updated_at)
+      VALUES (?, ?, ?, ?)
+      ON CONFLICT(project_id, name) DO UPDATE SET
+        content = excluded.content,
+        updated_at = excluded.updated_at
+    `, [req.params.id, name, content, now]);
+  }
+  dbDirty = true;
   res.json({ ok: true });
 });
 
 app.delete('/api/projects/:id/files/:name', (req, res) => {
-  db.prepare('DELETE FROM files WHERE project_id = ? AND name = ?')
-    .run(req.params.id, decodeURIComponent(req.params.name));
+  db.run('DELETE FROM files WHERE project_id = ? AND name = ?',
+    req.params.id, decodeURIComponent(req.params.name));
+  dbDirty = true;
   res.json({ ok: true });
 });
 
@@ -127,7 +195,7 @@ function runProc(cmd, args, cwd, timeoutMs = 15000) {
     proc.stdout.on('data', d => { stdout += d; if (stdout.length > 200000) proc.kill(); });
     proc.stderr.on('data', d => { stderr += d; if (stderr.length > 50000) proc.kill(); });
     proc.on('close', code => { clearTimeout(timer); resolve({ stdout, stderr, code: killed ? -1 : (code ?? -1), killed }); });
-    proc.on('error', e => { clearTimeout(timer); resolve({ stdout, stderr: e.message, code: -1, killed: false }); });
+    proc.on('error', e   => { clearTimeout(timer); resolve({ stdout, stderr: e.message,  code: -1, killed: false }); });
   });
 }
 
@@ -136,9 +204,9 @@ app.post('/api/run', async (req, res) => {
   const runner = RUNNERS[language];
   if (!runner) return res.json({ stdout: '', stderr: `Language not supported: ${language}`, code: 1 });
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rc-'));
+  const tmpDir   = fs.mkdtempSync(path.join(os.tmpdir(), 'rc-'));
   const baseName = (filename || 'main').replace(/\.[^.]+$/, '');
-  const srcFile = path.join(tmpDir, baseName + runner.ext);
+  const srcFile  = path.join(tmpDir, baseName + runner.ext);
 
   try {
     fs.writeFileSync(srcFile, code);
@@ -148,7 +216,6 @@ app.post('/api/run', async (req, res) => {
       const args = [...(runner.flags || []), srcFile];
       result = await runProc(runner.interp, args, tmpDir);
     } else {
-      // Compiled language
       const binPath = path.join(tmpDir, baseName);
       const [cc, ca] = runner.compile(srcFile, language === 'java' ? tmpDir : binPath);
       const cr = await runProc(cc, ca, tmpDir, 30000);
@@ -174,11 +241,11 @@ const rooms = new Map(); // projectId → Map(clientId → {ws, userId, color})
 const COLORS = ['#f97316','#3b82f6','#10b981','#a855f7','#ef4444','#eab308','#06b6d4','#ec4899','#14b8a6','#8b5cf6'];
 let colorCounter = 0;
 
-wss.on('connection', (ws, req) => {
-  const clientId = crypto.randomBytes(4).toString('hex');
-  let projectId = null;
-  let userId = 'User';
-  let userColor = COLORS[colorCounter++ % COLORS.length];
+wss.on('connection', (ws) => {
+  const clientId  = crypto.randomBytes(4).toString('hex');
+  let projectId    = null;
+  let userId       = 'User';
+  let userColor    = COLORS[colorCounter++ % COLORS.length];
 
   const send = (msg) => { try { ws.send(JSON.stringify(msg)); } catch (_) {} };
 
@@ -188,7 +255,7 @@ wss.on('connection', (ws, req) => {
 
     if (msg.type === 'join') {
       projectId = msg.projectId;
-      userId = msg.userId || ('User' + clientId.slice(0,4));
+      userId    = msg.userId || ('User' + clientId.slice(0,4));
       if (!rooms.has(projectId)) rooms.set(projectId, new Map());
       rooms.get(projectId).set(clientId, { ws, userId, userColor });
       send({ type: 'welcome', clientId, userId, userColor });
@@ -199,13 +266,16 @@ wss.on('connection', (ws, req) => {
     if (!projectId) return;
 
     if (msg.type === 'update') {
-      // Persist to DB immediately
       try {
-        db.prepare(`
+        const now = Math.floor(Date.now() / 1000);
+        db.run(`
           INSERT INTO files (project_id, name, content, updated_at)
-          VALUES (?, ?, ?, strftime('%s','now'))
-          ON CONFLICT(project_id, name) DO UPDATE SET content=excluded.content, updated_at=excluded.updated_at
-        `).run(projectId, msg.file, msg.content);
+          VALUES (?, ?, ?, ?)
+          ON CONFLICT(project_id, name) DO UPDATE SET
+            content = excluded.content,
+            updated_at = excluded.updated_at
+        `, [projectId, msg.file, msg.content, now]);
+        dbDirty = true;
       } catch (_) {}
       broadcast(projectId, clientId, { type: 'update', file: msg.file, content: msg.content, userId, userColor });
       return;
@@ -216,7 +286,7 @@ wss.on('connection', (ws, req) => {
       return;
     }
 
-    if (msg.type === 'ping') { send({ type: 'pong' }); }
+    if (msg.type === 'ping') send({ type: 'pong' });
   });
 
   ws.on('close', () => {
@@ -250,8 +320,19 @@ setInterval(() => {
   });
 }, 25000);
 
+// ── Startup ───────────────────────────────────────────────────────────────────
+
+process.on('SIGTERM', () => { closeDb(); process.exit(0); });
+process.on('SIGINT',  () => { closeDb(); process.exit(0); });
+
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`[Replit Clone] Backend running on :${PORT}`);
-  console.log(`[Replit Clone] SQLite: ./data/replit.db`);
+
+initDb().then(() => {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`[Replit Clone] Backend running on :${PORT}`);
+    console.log(`[Replit Clone] SQLite: ${DB_PATH}`);
+  });
+}).catch(err => {
+  console.error('[Replit Clone] DB init failed:', err);
+  process.exit(1);
 });

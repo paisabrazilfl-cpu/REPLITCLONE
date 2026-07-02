@@ -8,17 +8,15 @@ services:
     region: oregon
     plan: free
 
-    # Build and run from repo root so index.html and backend/ are siblings
     rootDir: ""
 
     buildCommand: |
-      cd backend && npm install && npm rebuild better-sqlite3
+      cd backend && npm install
 
     startCommand: |
       cp index.html backend/index.html
       cd backend && node server.js
 
-    # Persist SQLite DB across deploys
     disk:
       name: replit-clone-data
       mountPath: /app/backend/data
@@ -29,5 +27,3 @@ services:
         value: production
       - key: PORT
         value: 10000
-      - key: WEB_CONCURRENCY
-        value: 1
