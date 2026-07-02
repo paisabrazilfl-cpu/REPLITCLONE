@@ -677,7 +677,15 @@ const server = http.createServer(app);
 
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static(path.join(__dirname, '..')));
+// Static files with no-cache headers to prevent stale bundles
+app.use(express.static(path.join(__dirname, '..'), {
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('X-Build-Time', new Date().toISOString());
+  }
+}));
 
 // ── PROJECTS ──────────────────────────────────────────────────────────────────
 
