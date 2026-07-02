@@ -1389,6 +1389,7 @@ body:has(.app.dark){ background:#0A0A0B }
   </div>
   <div class="inspector-section inspector-foot">
     <div class="inspector-row"><span class="inspector-label">Backend</span><span class="inspector-val" id="inspectorStatus"><span class="dot ok"></span>connected</span></div>
+    <div class="inspector-row"><span class="inspector-label">Cloud sync</span><span class="inspector-val" id="inspectorCloud">local only</span></div>
     <div class="inspector-row"><span class="inspector-label">Latency</span><span class="inspector-val" id="inspectorLatency">—</span></div>
   </div>
 </div>
@@ -1438,13 +1439,20 @@ body:has(.app.dark){ background:#0A0A0B }
 
 <!-- User Menu Modal -->
 <div class="modal-overlay" id="userMenuModal">
-  <div class="modal" style="max-width:320px">
+  <div class="modal" style="max-width:340px">
     <div style="display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border)">
       <img id="menuAvatar" src="" alt="" style="width:48px;height:48px;border-radius:50%;background:#ccc"/>
       <div style="flex:1;min-width:0">
         <div id="menuName" style="font-weight:700;font-size:14px"></div>
         <div id="menuEmail" style="font-size:11.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
       </div>
+    </div>
+    <div style="padding:16px;border-bottom:1px solid var(--border)">
+      <div style="font-size:11px;text-transform:uppercase;font-weight:700;color:var(--text-3);letter-spacing:0.5px;margin-bottom:8px">Account</div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0"><span style="color:var(--text-3)">Status</span><span style="color:#22C55E;font-weight:600">✓ Signed in</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0"><span style="color:var(--text-3)">API keys</span><span id="menuKeyCount" style="font-weight:600">0</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0"><span style="color:var(--text-3)">Encryption</span><span style="font-weight:600">AES-256-GCM</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0"><span style="color:var(--text-3)">Storage</span><span style="font-weight:600;color:#22C55E">☁️ Cloud</span></div>
     </div>
     <div style="padding:12px">
       <button class="btn-3d" onclick="logout()" style="width:100%;color:#EF4444">Sign out</button>
@@ -1734,6 +1742,55 @@ function saveState(){
     localStorage.setItem('cc_crons', JSON.stringify(S.settingsCrons));
     localStorage.setItem('cc_enabled_models', JSON.stringify(S.enabledModels));
   } catch(e) {}
+  // Sync to backend if logged in (debounced)
+  if (authToken) scheduleBackendSync();
+}
+
+let _syncTimer = null;
+function scheduleBackendSync(){
+  if (_syncTimer) clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(syncToBackend, 1500);
+}
+
+async function syncToBackend(){
+  if (!authToken) return;
+  try {
+    // Sync settings
+    await fetch('/api/user/settings', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+      body: JSON.stringify({
+        settings: {
+          model: S.model,
+          darkMode: S.darkMode,
+          enabledTools: JSON.stringify(S.enabledTools || []),
+          enabledModels: JSON.stringify(S.enabledModels || []),
+        }
+      }),
+    }).catch(() => {});
+
+    // Sync each chat
+    for (const chat of S.chats) {
+      if (!chat || !chat.messages || chat.messages.length === 0) continue;
+      const chatId = chat.id || ('c_' + (chat.time || Date.now()));
+      chat.id = chatId;
+      await fetch('/api/user/chats/' + encodeURIComponent(chatId), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ name: chat.name, messages: chat.messages, active: S.activeChat === S.chats.indexOf(chat) }),
+      }).catch(() => {});
+    }
+    // Sync active conversation as a special "current" chat
+    if (S.messages && S.messages.length > 0) {
+      const first = S.messages.find(m => m.role === 'user');
+      const name = first ? first.content.substring(0, 40) : 'Current chat';
+      await fetch('/api/user/chats/current', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ name, messages: S.messages, active: true }),
+      }).catch(() => {});
+    }
+  } catch(e) { /* silent — localStorage is still source of truth */ }
 }
 
 // ── APPLY DARK MODE ───────────────────────────────────────────────────────────
@@ -1756,6 +1813,14 @@ function updateInspector(){
   document.getElementById('inspectorProvider').textContent = cfg?.provider || '—';
   document.getElementById('inspectorTools').textContent = (S.enabledTools?.length || 0) + ' enabled';
   document.getElementById('inspectorKeys').textContent = Object.keys(S.integKeys || {}).length + ' configured';
+  const cloudEl = document.getElementById('inspectorCloud');
+  if (cloudEl) {
+    if (authUser) {
+      cloudEl.innerHTML = '<span class="dot ok"></span>' + esc(authUser.email);
+    } else {
+      cloudEl.textContent = 'local only';
+    }
+  }
 }
 
 function inspectorLog(type, msg, meta){
@@ -1902,7 +1967,10 @@ async function codeReply(userPrompt) {
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+      },
       body: JSON.stringify({
         model: S.model,
         messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
@@ -1941,7 +2009,10 @@ async function aiReply(userText){
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: {
+        'Content-Type':'application/json',
+        ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+      },
       body: JSON.stringify({
         model: S.model,
         messages: [{role:'system',content:systemPrompt},...history,{role:'user',content:userText}],
@@ -2870,6 +2941,7 @@ function showAuthModal(){
 function closeAuthModal(){ document.getElementById('authModal').classList.remove('open') }
 function showUserMenu(){
   document.getElementById('userMenuModal').classList.add('open');
+  document.getElementById('menuKeyCount').textContent = Object.keys(S.integKeys || {}).length;
 }
 function closeUserMenu(){ document.getElementById('userMenuModal').classList.remove('open') }
 
@@ -2966,9 +3038,28 @@ async function syncFromBackend(){
     });
     if (settingsRes.ok) {
       const sData = await settingsRes.json();
-      if (sData.settings && Object.keys(sData.settings).length > 0) {
-        S = { ...S, ...sData.settings };
+      if (sData.settings) {
+        if (sData.settings.model) S.model = sData.settings.model;
+        if (sData.settings.darkMode) S.darkMode = sData.settings.darkMode === 'true' || sData.settings.darkMode === true;
+        if (sData.settings.enabledTools) { try { S.enabledTools = JSON.parse(sData.settings.enabledTools) } catch(e){} }
+        if (sData.settings.enabledModels) { try { S.enabledModels = JSON.parse(sData.settings.enabledModels) } catch(e){} }
         saveState();
+        populateModelDropdown();
+      }
+    }
+    // Fetch chat history
+    const chatsRes = await fetch('/api/user/chats', {
+      headers: { 'Authorization': 'Bearer ' + authToken }
+    });
+    if (chatsRes.ok) {
+      const cData = await chatsRes.json();
+      if (cData.chats && cData.chats.length > 0) {
+        // Merge cloud chats with local (cloud wins for known ids)
+        const cloudById = {};
+        cData.chats.forEach(c => { cloudById[c.chat_id] = c; });
+        S.chats = cData.chats.map(c => ({ id: c.chat_id, name: c.name, time: c.updated_at, messages: c.messages }));
+        saveState();
+        renderChats();
       }
     }
     inspectorLog('success', 'Synced data from cloud');

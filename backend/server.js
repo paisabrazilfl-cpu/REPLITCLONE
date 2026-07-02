@@ -72,8 +72,8 @@ async function aiChat({ model, messages, tools, stream, apiKey, baseUrl }) {
 }
 
 // NVIDIA — OpenAI-compatible at https://integrate.api.nvidia.com/v1
-async function chatNVIDIA(model, messages, tools, stream) {
-  const key = nextNvidiaKey();
+async function chatNVIDIA(model, messages, tools, stream, apiKeyOverride) {
+  const key = apiKeyOverride || nextNvidiaKey();
   if (!key) throw new Error('No NVIDIA API key configured');
   return aiChat({
     model, messages, tools, stream,
@@ -83,8 +83,8 @@ async function chatNVIDIA(model, messages, tools, stream) {
 }
 
 // Kimi AI (kimi.moonshot.cn) — OpenAI-compatible
-async function chatKimi(messages, tools, stream) {
-  const key = E('KIMI_API_KEY');
+async function chatKimi(messages, tools, stream, apiKeyOverride) {
+  const key = apiKeyOverride || E('KIMI_API_KEY');
   if (!key) throw new Error('No KIMI_API_KEY configured');
   return aiChat({
     model: 'moonshotai/kimi-v1-128k',
@@ -95,8 +95,8 @@ async function chatKimi(messages, tools, stream) {
 }
 
 // OpenRouter — routes to many models
-async function chatOpenRouter(model, messages, tools, stream) {
-  const key = E('OPENROUTER_API_KEY');
+async function chatOpenRouter(model, messages, tools, stream, apiKeyOverride) {
+  const key = apiKeyOverride || E('OPENROUTER_API_KEY');
   if (!key) throw new Error('No OPENROUTER_API_KEY configured');
   return aiChat({
     model, messages, tools, stream,
@@ -106,8 +106,8 @@ async function chatOpenRouter(model, messages, tools, stream) {
 }
 
 // OpenAI — direct
-async function chatOpenAI(model, messages, tools, stream) {
-  const key = E('OPENAI_API_KEY');
+async function chatOpenAI(model, messages, tools, stream, apiKeyOverride) {
+  const key = apiKeyOverride || E('OPENAI_API_KEY');
   if (!key) throw new Error('No OPENAI_API_KEY configured');
   return aiChat({
     model, messages, tools, stream,
@@ -117,8 +117,8 @@ async function chatOpenAI(model, messages, tools, stream) {
 }
 
 // Google Gemini
-async function chatGemini(model, messages) {
-  const key = E('GEMINI_API_KEY');
+async function chatGemini(model, messages, apiKeyOverride) {
+  const key = apiKeyOverride || E('GEMINI_API_KEY');
   if (!key) throw new Error('No GEMINI_API_KEY configured');
   const contents = messages.filter(m => m.role !== 'system').map(m => ({
     role: m.role === 'assistant' ? 'model' : 'user',
@@ -135,8 +135,8 @@ async function chatGemini(model, messages) {
 }
 
 // Groq — fast free tier
-async function chatGroq(model, messages, tools, stream) {
-  const key = E('GROQ_API_KEY');
+async function chatGroq(model, messages, tools, stream, apiKeyOverride) {
+  const key = apiKeyOverride || E('GROQ_API_KEY');
   if (!key) throw new Error('No GROQ_API_KEY configured');
   return aiChat({
     model, messages, tools, stream,
@@ -146,8 +146,8 @@ async function chatGroq(model, messages, tools, stream) {
 }
 
 // DeepSeek
-async function chatDeepSeek(messages, tools, stream) {
-  const key = E('DEEPSEEK_API_KEY');
+async function chatDeepSeek(messages, tools, stream, apiKeyOverride) {
+  const key = apiKeyOverride || E('DEEPSEEK_API_KEY');
   if (!key) throw new Error('No DEEPSEEK_API_KEY configured');
   return aiChat({
     model: 'deepseek-chat',
@@ -306,10 +306,12 @@ async function executeComposioTool(toolName, args, apiKey) {
 
 // ── INTEGRATION TOOL EXECUTION ────────────────────────────────────────────────
 
-async function executeIntegrationTool(id, args) {
+async function executeIntegrationTool(id, args, userId) {
+  // Get user-scoped API key if available, fall back to env
+  const uk = (k) => userId ? (getUserApiKey(userId, k.toLowerCase()) || E(k)) : E(k);
   const handlers = {
     tavily: async () => {
-      const key = E('TAVILY_API_KEY');
+      const key = uk('TAVILY_API_KEY');
       if (!key) throw new Error('No TAVILY_API_KEY');
       const { data } = await httpReq('POST', 'https://api.tavily.com/v3/search', {
         body: { query: args.query || args.q || args.prompt, api_key: key, max_results: 5 },
@@ -327,7 +329,7 @@ async function executeIntegrationTool(id, args) {
     },
     websearch: async () => handlers.tavily(), // aliases
     scrapfly: async () => {
-      const apiKey = E('SCRAPFLY_API_KEY');
+      const apiKey = uk('SCRAPFLY_API_KEY');
       if (!apiKey) throw new Error('No SCRAPFLY_API_KEY');
       const url = args.url || args.website;
       if (!url) throw new Error('Missing url parameter');
@@ -338,7 +340,7 @@ async function executeIntegrationTool(id, args) {
       return data;
     },
     scrapingbee: async () => {
-      const key = E('SCRAPINGBEE_API_KEY');
+      const key = uk('SCRAPINGBEE_API_KEY');
       if (!key) throw new Error('No SCRAPINGBEE_API_KEY');
       const url = args.url;
       if (!url) throw new Error('Missing url parameter');
@@ -348,7 +350,7 @@ async function executeIntegrationTool(id, args) {
       return { content: data };
     },
     exa: async () => {
-      const key = E('EXA_API_KEY');
+      const key = uk('EXA_API_KEY');
       if (!key) throw new Error('No EXA_API_KEY');
       const { data } = await httpReq('POST', 'https://api.exa.ai/search', {
         headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
@@ -357,7 +359,7 @@ async function executeIntegrationTool(id, args) {
       return data;
     },
     firecrawl: async () => {
-      const key = E('FIRECRAWL_API_KEY');
+      const key = uk('FIRECRAWL_API_KEY');
       if (!key) throw new Error('No FIRECRAWL_API_KEY');
       const url = args.url;
       if (!url) throw new Error('Missing url parameter');
@@ -376,7 +378,7 @@ async function executeIntegrationTool(id, args) {
       return data;
     },
     e2b: async () => {
-      const key = E('E2B_API_KEY');
+      const key = uk('E2B_API_KEY');
       if (!key) throw new Error('No E2B_API_KEY');
       // List sandboxes
       const { data } = await httpReq('GET', 'https://api.e2b.dev/v1/sandbox', {
@@ -385,7 +387,7 @@ async function executeIntegrationTool(id, args) {
       return data;
     },
     massive: async () => {
-      const key = E('MASSIVE_API_KEY');
+      const key = uk('MASSIVE_API_KEY');
       if (!key) throw new Error('No MASSIVE_API_KEY');
       const { data } = await httpReq('POST', 'https://api.massive.tech/v1/chat', {
         body: { query: args.query || args.prompt || args.message, key },
@@ -457,8 +459,10 @@ const MODEL_CONFIG = {
   'nvidia-mistral':  { provider: 'nvidia',   model: 'mistralai/mistral-small-4-119b-2603', hidden: false },
 };
 
-async function routeChat({ model, messages, tools, enabledTools }) {
+async function routeChat({ model, messages, tools, enabledTools, userId }) {
   const cfg = MODEL_CONFIG[model] || { provider: 'openai', model };
+  // If user is logged in, prefer their per-user API key over env var
+  const userKey = userId ? getUserApiKey(userId, cfg.provider) : null;
   const allTools = [];
 
   // Add Composio tools if API key present
@@ -481,32 +485,32 @@ async function routeChat({ model, messages, tools, enabledTools }) {
 
   switch (cfg.provider) {
     case 'nvidia': {
-      const res = await chatNVIDIA(cfg.model, messages, mergedTools.length ? mergedTools : undefined, false);
+      const res = await chatNVIDIA(cfg.model, messages, mergedTools.length ? mergedTools : undefined, false, userKey);
       return res;
     }
     case 'kimi': {
-      const res = await chatKimi(messages, mergedTools.length ? mergedTools : undefined, false);
+      const res = await chatKimi(messages, mergedTools.length ? mergedTools : undefined, false, userKey);
       return res;
     }
     case 'openrouter': {
-      const res = await chatOpenRouter(cfg.model, messages, mergedTools.length ? mergedTools : undefined, false);
+      const res = await chatOpenRouter(cfg.model, messages, mergedTools.length ? mergedTools : undefined, false, userKey);
       return res;
     }
     case 'gemini': {
-      const res = await chatGemini(cfg.model, messages);
+      const res = await chatGemini(cfg.model, messages, userKey);
       return res;
     }
     case 'groq': {
-      const res = await chatGroq(cfg.model, messages, mergedTools.length ? mergedTools : undefined, false);
+      const res = await chatGroq(cfg.model, messages, mergedTools.length ? mergedTools : undefined, false, userKey);
       return res;
     }
     case 'deepseek': {
-      const res = await chatDeepSeek(messages, mergedTools.length ? mergedTools : undefined, false);
+      const res = await chatDeepSeek(messages, mergedTools.length ? mergedTools : undefined, false, userKey);
       return res;
     }
     case 'openai':
     default: {
-      const res = await chatOpenAI(cfg.model, messages, mergedTools.length ? mergedTools : undefined, false);
+      const res = await chatOpenAI(cfg.model, messages, mergedTools.length ? mergedTools : undefined, false, userKey);
       return res;
     }
   }
@@ -961,10 +965,11 @@ app.delete('/api/projects/:id/files/:name', (req, res) => {
 
 app.post('/api/chat', async (req, res) => {
   const { model, messages, tools: forcedTools, enabledTools } = req.body;
+  const userId = req.user?.uid || null;
 
   try {
     // 1. Get AI response (may include tool calls)
-    const aiRes = await routeChat({ model, messages, tools: forcedTools, enabledTools });
+    const aiRes = await routeChat({ model, messages, tools: forcedTools, enabledTools, userId });
     const choice = aiRes.choices?.[0];
     let reply = choice?.message?.content || '';
     const toolCalls = choice?.message?.tool_calls || [];
@@ -982,7 +987,7 @@ app.post('/api/chat', async (req, res) => {
           result = await executeComposioTool(fn.name, args, E('COMPOSIO_API_KEY'));
         } else {
           const args = JSON.parse(fn.arguments || '{}');
-          result = await executeIntegrationTool(fn.name, args);
+          result = await executeIntegrationTool(fn.name, args, userId);
         }
         toolResults.push({ tool_call_id: tc.id, name: fn.name, result });
       } catch (e) {
@@ -1001,7 +1006,7 @@ app.post('/api/chat', async (req, res) => {
           content: typeof r.result === 'object' ? JSON.stringify(r.result, null, 2) : String(r.result || r.error || ''),
         })),
       ]);
-      const finalRes = await routeChat({ model, messages: toolMessages, tools: forcedTools, enabledTools });
+      const finalRes = await routeChat({ model, messages: toolMessages, tools: forcedTools, enabledTools, userId });
       reply = finalRes.choices?.[0]?.message?.content || reply;
     }
 
@@ -1020,7 +1025,7 @@ app.post('/api/chat/stream', async (req, res) => {
   res.flushHeaders();
 
   try {
-    const aiRes = await routeChat({ model, messages, tools, enabledTools, stream: true });
+    const aiRes = await routeChat({ model, messages, tools, enabledTools, stream: true, userId: req.user?.uid || null });
     for await (const chunk of aiRes) {
       const content = chunk.choices?.[0]?.delta?.content;
       if (content) res.write(`data: ${JSON.stringify({ content })}\n\n`);
@@ -1063,7 +1068,8 @@ app.post('/api/tools/execute', async (req, res) => {
   const { toolId, args } = req.body;
   if (!toolId) return res.status(400).json({ error: 'toolId required' });
   try {
-    const result = await executeIntegrationTool(toolId, args || {});
+    const userId = req.user?.uid || null;
+    const result = await executeIntegrationTool(toolId, args || {}, userId);
     res.json({ result });
   } catch (e) {
     res.status(500).json({ error: e.message });
