@@ -309,7 +309,7 @@ async function executeIntegrationTool(id, args) {
     tavily: async () => {
       const key = E('TAVILY_API_KEY');
       if (!key) throw new Error('No TAVILY_API_KEY');
-      const { data } = await httpReq('POST', 'https://api.tavily.com/search', {
+      const { data } = await httpReq('POST', 'https://api.tavily.com/v3/search', {
         body: { query: args.query || args.q || args.prompt, api_key: key, max_results: 5 },
       });
       return data;
