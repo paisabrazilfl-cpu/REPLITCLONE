@@ -1,5 +1,9 @@
-# render.yaml — Replit Clone on Render
+# render.yaml — Claw Code on Render
 # Docs: https://render.com/docs/yaml
+#
+# ⚠️  API KEYS are NOT stored here.
+# Add all secrets via: Render Dashboard → Service → Environment → Add Environment Variable
+# Or use Render Secret Store: https://dashboard.render.com/docs/api#secrets
 
 services:
   - type: web
