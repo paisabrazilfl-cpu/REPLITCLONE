@@ -1556,11 +1556,12 @@ document.getElementById('sidebarClose').onclick = closeSidebar;
 scrim.onclick = closeSidebar;
 
 // ── MODEL SELECT ──────────────────────────────────────────────────────────────
+if (!AI_MODELS[S.model]) S.model = Object.keys(AI_MODELS)[0];
+populateModelDropdown();
 modelSel.value = S.model;
-engineName.textContent = AI_MODELS[S.model].label;
 modelSel.addEventListener('change', () => {
   S.model = modelSel.value;
-  engineName.textContent = AI_MODELS[S.model].label;
+  engineName.textContent = AI_MODELS[S.model]?.label || S.model;
   saveState();
 });
 
