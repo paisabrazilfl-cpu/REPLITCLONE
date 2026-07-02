@@ -330,6 +330,15 @@ body{
   background:linear-gradient(145deg,#2E2E2E,#282828);
   border-color:#3A3A3A;color:#6B6560;
 }
+/* Group badge on integration cards */
+.badge-group{
+  background:linear-gradient(145deg,#EAE5F5,#DDD8EE);
+  color:#6B45C0;border:1px solid #C4B8DE;
+}
+.app.dark .badge-group{
+  background:linear-gradient(145deg,#2E2840,#262035);
+  border-color:#3A3455;color:#A088D8;
+}
 
 /* Chevron */
 .chevron{color:var(--text-3);font-size:12px;flex-shrink:0}
@@ -606,7 +615,402 @@ body{
 .setting-name{font-size:13px;font-weight:600;color:var(--text)}
 .setting-desc{font-size:11px;color:var(--text-3)}
 .setting-chevron{color:var(--text-3);font-size:11px}
-</style>
+
+/* ═══════════════════════════════════════════════════════════
+   3D BUTTON SYSTEM — Warm Dark Theme
+   ═══════════════════════════════════════════════════════════ */
+
+/* Deep 3D raised button */
+.btn-3d{
+  font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:0.3px;
+  border-radius:12px;padding:8px 15px;cursor:pointer;border:none;
+  position:relative;overflow:hidden;user-select:none;-webkit-user-select:none;
+  /* Light source from top-left */
+  background:linear-gradient(160deg,#4A4A4A 0%,#323232 40%,#282828 100%);
+  color:#E8E4DC;
+  border-top:1.5px solid rgba(255,255,255,0.12);
+  border-left:1.5px solid rgba(255,255,255,0.08);
+  border-right:1.5px solid rgba(0,0,0,0.4);
+  border-bottom:1.5px solid rgba(0,0,0,0.6);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.1) inset,
+    0 2px 4px rgba(0,0,0,0.2) inset,
+    0 4px 8px rgba(0,0,0,0.3),
+    0 6px 16px rgba(0,0,0,0.25),
+    0 1px 2px rgba(0,0,0,0.4);
+  transition:all 0.15s cubic-bezier(0.4,0,0.2,1);
+  text-shadow:0 1px 1px rgba(0,0,0,0.4);
+}
+.btn-3d:hover{
+  background:linear-gradient(160deg,#565656 0%,#3A3A3A 40%,#303030 100%);
+  border-top-color:rgba(255,255,255,0.15);
+  border-left-color:rgba(255,255,255,0.1);
+  transform:translateY(-2px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.12) inset,
+    0 4px 6px rgba(0,0,0,0.25) inset,
+    0 8px 16px rgba(0,0,0,0.35),
+    0 12px 24px rgba(0,0,0,0.3);
+}
+.btn-3d:active{
+  background:linear-gradient(160deg,#282828 0%,#2E2E2E 60%,#383838 100%);
+  border-top-color:rgba(255,255,255,0.06);
+  border-left-color:rgba(255,255,255,0.04);
+  border-bottom-color:rgba(255,255,255,0.04);
+  transform:translateY(1px);
+  box-shadow:
+    0 -1px 0 rgba(0,0,0,0.2) inset,
+    0 1px 2px rgba(0,0,0,0.3) inset,
+    0 2px 4px rgba(0,0,0,0.3),
+    0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Accent 3D button — terracotta/coral */
+.btn-3d-accent{
+  background:linear-gradient(160deg,#F07A4A 0%,#E05C2A 40%,#C8501E 100%);
+  color:#fff;
+  border-top:1.5px solid rgba(255,255,255,0.3);
+  border-left:1.5px solid rgba(255,255,255,0.2);
+  border-right:1.5px solid rgba(0,0,0,0.3);
+  border-bottom:1.5px solid rgba(0,0,0,0.5);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.25) inset,
+    0 2px 4px rgba(0,0,0,0.15) inset,
+    0 4px 8px rgba(224,92,42,0.35),
+    0 6px 16px rgba(224,92,42,0.25),
+    0 1px 2px rgba(0,0,0,0.4);
+  text-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+.btn-3d-accent:hover{
+  background:linear-gradient(160deg,#F88A5A 0%,#E86A38 40%,#D05A25 100%);
+  transform:translateY(-2px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.3) inset,
+    0 4px 6px rgba(0,0,0,0.2) inset,
+    0 8px 18px rgba(224,92,42,0.45),
+    0 14px 28px rgba(224,92,42,0.3);
+}
+.btn-3d-accent:active{
+  background:linear-gradient(160deg,#C05020 0%,#D05A28 60%,#E06A30 100%);
+  transform:translateY(1px);
+  box-shadow:
+    0 -1px 0 rgba(0,0,0,0.15) inset,
+    0 1px 2px rgba(0,0,0,0.2) inset,
+    0 2px 4px rgba(224,92,42,0.3),
+    0 1px 2px rgba(0,0,0,0.4);
+}
+.btn-3d-accent:disabled{
+  background:linear-gradient(160deg,#A0908A 0%,#908880 100%);
+  color:rgba(255,255,255,0.4);
+  box-shadow:0 2px 4px rgba(0,0,0,0.2),0 1px 2px rgba(0,0,0,0.3);
+  cursor:not-allowed;
+}
+
+/* Green ready 3D button */
+.btn-3d-green{
+  background:linear-gradient(160deg,#3DDD6A 0%,#28C55E 40%,#1DB954 100%);
+  color:#fff;
+  border-top:1.5px solid rgba(255,255,255,0.35);
+  border-left:1.5px solid rgba(255,255,255,0.25);
+  border-right:1.5px solid rgba(0,0,0,0.25);
+  border-bottom:1.5px solid rgba(0,0,0,0.45);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.3) inset,
+    0 2px 4px rgba(0,0,0,0.12) inset,
+    0 4px 8px rgba(29,185,84,0.3),
+    0 6px 16px rgba(29,185,84,0.2),
+    0 1px 2px rgba(0,0,0,0.4);
+  text-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+.btn-3d-green:hover{
+  background:linear-gradient(160deg,#50EE7E 0%,#32D86A 40%,#22C45A 100%);
+  transform:translateY(-2px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.35) inset,
+    0 4px 6px rgba(0,0,0,0.15) inset,
+    0 8px 18px rgba(29,185,84,0.4),
+    0 14px 28px rgba(29,185,84,0.25);
+}
+.btn-3d-green:active{
+  transform:translateY(1px);
+  box-shadow:
+    0 -1px 0 rgba(0,0,0,0.1) inset,
+    0 1px 2px rgba(0,0,0,0.2) inset,
+    0 2px 4px rgba(29,185,84,0.3),
+    0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AI AGENTS GRID
+   ═══════════════════════════════════════════════════════════ */
+
+.agents-container{
+  padding:0 14px 20px;overflow-y:auto;max-height:calc(100vh - 160px);
+}
+
+.agent-section{margin-bottom:20px}
+.agent-section-header{
+  font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text-3);padding:0 0 8px 2px;margin-bottom:8px;
+}
+.agent-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+}
+
+/* Squircle agent card */
+.agent-card{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:10px 4px 8px;cursor:pointer;
+  border-radius:16px;
+  background:linear-gradient(160deg,#2E2E2E 0%,#252525 100%);
+  border-top:1.5px solid rgba(255,255,255,0.1);
+  border-left:1.5px solid rgba(255,255,255,0.07);
+  border-right:1.5px solid rgba(0,0,0,0.4);
+  border-bottom:1.5px solid rgba(0,0,0,0.5);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.08) inset,
+    0 2px 4px rgba(0,0,0,0.2) inset,
+    0 3px 8px rgba(0,0,0,0.3),
+    0 1px 2px rgba(0,0,0,0.4);
+  transition:all 0.18s cubic-bezier(0.4,0,0.2,1);
+  user-select:none;-webkit-user-select:none;
+}
+.agent-card:hover{
+  background:linear-gradient(160deg,#383838 0%,#2C2C2C 100%);
+  border-top-color:rgba(255,255,255,0.15);
+  transform:translateY(-3px) scale(1.03);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.1) inset,
+    0 4px 8px rgba(0,0,0,0.3) inset,
+    0 8px 18px rgba(0,0,0,0.4),
+    0 16px 32px rgba(0,0,0,0.25);
+}
+.agent-card:active{
+  transform:translateY(1px) scale(0.97);
+  box-shadow:
+    0 -1px 0 rgba(0,0,0,0.2) inset,
+    0 1px 2px rgba(0,0,0,0.3) inset,
+    0 2px 4px rgba(0,0,0,0.3),
+    0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Agent icon container — raised squircle */
+.agent-icon-wrap{
+  width:42px;height:42px;border-radius:13px;
+  background:linear-gradient(145deg,#3A3A3A,#2A2A2A);
+  border-top:1.5px solid rgba(255,255,255,0.12);
+  border-left:1.5px solid rgba(255,255,255,0.08);
+  border-right:1.5px solid rgba(0,0,0,0.4);
+  border-bottom:1.5px solid rgba(0,0,0,0.55);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.1) inset,
+    0 2px 4px rgba(0,0,0,0.25) inset,
+    0 3px 6px rgba(0,0,0,0.3),
+    0 1px 1px rgba(0,0,0,0.4);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;line-height:1;
+  transition:box-shadow 0.18s;
+}
+.agent-card:hover .agent-icon-wrap{
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.13) inset,
+    0 3px 6px rgba(0,0,0,0.3) inset,
+    0 5px 10px rgba(0,0,0,0.35),
+    0 2px 2px rgba(0,0,0,0.4);
+}
+.agent-label{
+  font-size:9.5px;font-weight:700;color:#B8B3AB;text-align:center;
+  line-height:1.2;letter-spacing:0.1px;
+  text-shadow:0 1px 1px rgba(0,0,0,0.4);
+}
+
+/* Ambient glow at bottom of agents area */
+.agents-glow{
+  position:relative;
+}
+.agents-glow::after{
+  content:'';position:absolute;bottom:-20px;left:-50%;right:-50%;
+  height:80px;
+  background:radial-gradient(ellipse at center bottom, rgba(29,185,84,0.15) 0%, rgba(224,92,42,0.08) 40%, transparent 70%);
+  filter:blur(15px);pointer-events:none;z-index:0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SETTINGS PANEL
+   ═══════════════════════════════════════════════════════════ */
+
+.settings-tabs{
+  display:flex;gap:6px;padding:0 0 12px;
+  border-bottom:1.5px solid var(--border);margin-bottom:12px;
+}
+.settings-tab{
+  font-family:var(--font);font-size:11.5px;font-weight:700;
+  padding:5px 12px;border-radius:20px;border:none;cursor:pointer;
+  background:#F3F0EB;color:var(--text-2);
+  transition:all 0.15s;
+}
+.app.dark .settings-tab{background:#2A2A2A;color:#A8A29E}
+.settings-tab.active{
+  background:var(--accent);color:#fff;
+  box-shadow:0 2px 6px rgba(224,92,42,0.35);
+}
+
+/* Model toggle list */
+.model-toggle-list{display:flex;flex-direction:column;gap:8px}
+.model-toggle-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:linear-gradient(160deg,#F5F2EE,#EFECE8);
+  border:1.5px solid #E0DDD8;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 0 rgba(255,255,255,0.8) inset;
+}
+.app.dark .model-toggle-item{
+  background:linear-gradient(160deg,#2A2A2A,#242424);
+  border-color:#383838;
+  box-shadow:0 1px 3px rgba(0,0,0,0.3),0 1px 0 rgba(255,255,255,0.04) inset;
+}
+.model-toggle-icon{font-size:16px}
+.model-toggle-info{flex:1}
+.model-toggle-name{font-size:12.5px;font-weight:700;color:var(--text)}
+.model-toggle-provider{font-size:10px;color:var(--text-3);margin-top:1px}
+.model-toggle .toggle-switch{
+  position:relative;width:38px;height:22px;cursor:pointer;flex-shrink:0;
+}
+.model-toggle .toggle-switch input{display:none}
+.model-toggle .toggle-track{
+  position:absolute;inset:0;border-radius:11px;
+  background:#CCCAC4;transition:background 0.2s;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,0.15);
+}
+.model-toggle .toggle-switch input:checked + .toggle-track{
+  background:linear-gradient(145deg,#3DEE6A,#1DB954);
+  box-shadow:inset 0 2px 4px rgba(0,0,0,0.15),0 0 6px rgba(29,185,84,0.3);
+}
+.model-toggle .toggle-thumb{
+  position:absolute;top:2px;left:2px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:transform 0.2s cubic-bezier(0.4,0,0.2,1);
+  box-shadow:0 1px 4px rgba(0,0,0,0.25),0 0 0 1px rgba(0,0,0,0.06);
+}
+.model-toggle .toggle-switch input:checked ~ .toggle-thumb{transform:translateX(16px)}
+
+/* API key input rows */
+.api-key-list{display:flex;flex-direction:column;gap:8px}
+.api-key-item{
+  padding:12px;
+  border-radius:12px;
+  background:linear-gradient(160deg,#F5F2EE,#EFECE8);
+  border:1.5px solid #E0DDD8;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);
+}
+.app.dark .api-key-item{
+  background:linear-gradient(160deg,#2A2A2A,#242424);
+  border-color:#383838;
+  box-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
+.api-key-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.api-key-icon{font-size:18px}
+.api-key-name{font-size:13px;font-weight:700;color:var(--text);flex:1}
+.api-key-badge{
+  font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;
+  background:#DCFCE7;color:#16A34A;letter-spacing:0.3px;
+}
+.app.dark .api-key-badge{background:rgba(29,185,84,0.2);color:#3DEE6A}
+.api-key-badge.missing{background:#F3F0EB;color:#9A9590}
+.app.dark .api-key-badge.missing{background:#2A2A2A;color:#6B6560}
+.api-key-input{
+  width:100%;background:#fff;border:1.5px solid #D8D4CC;border-radius:8px;
+  padding:8px 10px;font-family:var(--font);font-size:11.5px;color:var(--text);
+  outline:none;transition:border-color 0.15s;box-sizing:border-box;
+}
+.app.dark .api-key-input{background:#1E1E1E;border-color:#383838;color:#E8E4DC}
+.api-key-input:focus{border-color:var(--accent)}
+.api-key-input::placeholder{color:#B8B4AD}
+
+/* Cron jobs */
+.cron-list{display:flex;flex-direction:column;gap:8px}
+.cron-item{
+  padding:12px;
+  border-radius:12px;
+  background:linear-gradient(160deg,#F5F2EE,#EFECE8);
+  border:1.5px solid #E0DDD8;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);
+}
+.app.dark .cron-item{
+  background:linear-gradient(160deg,#2A2A2A,#242424);
+  border-color:#383838;box-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
+.cron-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.cron-name{font-size:12.5px;font-weight:700;color:var(--text);flex:1}
+.cron-schedule{
+  font-size:10px;font-weight:600;color:var(--accent);
+  background:rgba(224,92,42,0.1);padding:2px 7px;border-radius:10px;
+}
+.cron-prompt{font-size:11px;color:var(--text-2);margin-bottom:8px;line-height:1.4}
+.cron-actions{display:flex;gap:6px}
+
+/* Add cron button */
+.add-cron-btn{
+  width:100%;padding:10px;
+  border-radius:12px;
+  border:1.5px dashed #C8C4BC;background:transparent;
+  color:var(--text-3);font-family:var(--font);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all 0.15s;margin-top:4px;
+}
+.add-cron-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(224,92,42,0.05)}
+.app.dark .add-cron-btn{border-color:#3A3A3A;color:#6B6560}
+.app.dark .add-cron-btn:hover{border-color:var(--accent);color:#F07A4A}
+
+/* Section dividers */
+.settings-section-title{
+  font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text-3);padding:12px 0 8px;
+}
+
+/* Tool call indicator in chat */
+.tool-call-msg{
+  padding:10px 12px;border-radius:10px;margin:6px 0;
+  background:linear-gradient(135deg,rgba(224,92,42,0.08),rgba(224,92,42,0.04));
+  border:1px solid rgba(224,92,42,0.2);
+  font-size:11px;color:var(--text-2);
+}
+.tool-call-msg .tool-name{font-weight:700;color:var(--accent)}
+.tool-result-msg{
+  padding:10px 12px;border-radius:10px;margin:6px 0;
+  background:linear-gradient(135deg,rgba(29,185,84,0.06),rgba(29,185,84,0.03));
+  border:1px solid rgba(29,185,84,0.2);
+  font-size:11px;color:var(--text-2);font-family:monospace;max-height:150px;overflow-y:auto;
+}
+
+/* Status panel in settings */
+.provider-status-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;
+}
+.provider-status-chip{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 10px;border-radius:10px;
+  background:#F3F0EB;border:1px solid #E0DDD8;
+  font-size:11px;font-weight:600;color:var(--text-2);
+}
+.app.dark .provider-status-chip{background:#2A2A2A;border-color:#333}
+.provider-status-chip .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.provider-status-chip .dot.on{background:#22C55E}
+.provider-status-chip .dot.off{background:#C8C3BC}
+.app.dark .provider-status-chip .dot.off{background:#555}
+
+/* Health status bar */
+.health-bar{
+  padding:12px;border-radius:12px;margin-bottom:16px;
+  background:linear-gradient(135deg,rgba(29,185,84,0.08),rgba(29,185,84,0.04));
+  border:1px solid rgba(29,185,84,0.2);
+  font-size:11.5px;color:#16A34A;font-weight:600;
+  display:flex;align-items:center;gap:8px;
+}
+.health-bar .dot{width:8px;height:8px;border-radius:50%;background:#22C55E;box-shadow:0 0 0 3px rgba(34,197,94,0.2)}
+.health-bar.partial{background:linear-gradient(135deg,rgba(234,179,8,0.08),rgba(234,179,8,0.04));border-color:rgba(234,179,8,0.2);color:#CA8A04}
+.health-bar.partial .dot{background:#EAB308;box-shadow:0 0 0 3px rgba(234,179,8,0.2)}
+
 </head>
 <body>
 <div class="app" id="app">
@@ -626,14 +1030,41 @@ body{
     </div>
     <div class="header-center">
       <select class="model-select" id="modelSelect">
-        <option value="nemotron">Nemotron 3 Super 120B</option>
-        <option value="claude-4-sonnet">Claude 4 Sonnet</option>
-        <option value="claude-4-opus">Claude 4 Opus</option>
-        <option value="gpt-4o">GPT-4o</option>
-        <option value="gpt-4-turbo">GPT-4 Turbo</option>
-        <option value="gemini-2-flash">Gemini 2.0 Flash</option>
-        <option value="llama-3-1-405b">Llama 3.1 405B</option>
-        <option value="deepseek-v3">DeepSeek V3</option>
+        <optgroup label="&#127773; NVIDIA">
+          <option value="nvidia-nemotron">Nemotron 3 Ultra 550B</option>
+          <option value="nvidia-kimi-k2">Kimi K2.6</option>
+          <option value="nvidia-glm">GLM-5.1</option>
+          <option value="nvidia-deepseek">DeepSeek V4 Pro</option>
+          <option value="nvidia-mistral">Mistral Small 4 119B</option>
+          <option value="nvidia-phi4-mm">Phi-4 Multimodal 8B</option>
+          <option value="nvidia-llama-vl">Llama 3.1 Nemotron VL</option>
+        </optgroup>
+        <optgroup label="&#128187; Kimi">
+          <option value="kimi-v1">Kimi V1 128K</option>
+        </optgroup>
+        <optgroup label="&#127918; OpenRouter">
+          <option value="claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+          <option value="qwen-3-7b">Qwen 3.7B</option>
+          <option value="grok-4">Grok-4.3</option>
+        </optgroup>
+        <optgroup label="&#127761; OpenAI">
+          <option value="gpt-4o">GPT-4o</option>
+          <option value="gpt-4o-mini">GPT-4o Mini</option>
+          <option value="gpt-4-turbo">GPT-4 Turbo</option>
+        </optgroup>
+        <optgroup label="&#127760; Gemini">
+          <option value="gemini-2-flash">Gemini 2.0 Flash</option>
+          <option value="gemini-2-pro">Gemini 2.0 Pro</option>
+        </optgroup>
+        <optgroup label="&#9881; Groq">
+          <option value="llama-3.1-70b">Llama 3.1 70B</option>
+          <option value="llama-3.1-8b">Llama 3.1 8B</option>
+          <option value="mixtral-8x7b">Mixtral 8x7B</option>
+        </optgroup>
+        <optgroup label="&#10022; DeepSeek">
+          <option value="deepseek-v3">DeepSeek V3</option>
+          <option value="deepseek-r1">DeepSeek R1 (Reasoning)</option>
+        </optgroup>
       </select>
     </div>
     <div class="header-right">
@@ -681,7 +1112,7 @@ body{
         <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
       </button>
     </div>
-    <div class="engine-info">Engine: <strong id="engineName">Nemotron 3 Super 120B</strong> (manual)</div>
+    <div class="engine-info">Engine: <strong id="engineName">Nemotron 3 Ultra 550B</strong></div>
   </div>
 
   <!-- Code panel -->
@@ -739,6 +1170,14 @@ body{
       <svg viewBox="0 0 16 16"><path d="M5.3 3.3L1.9 6.7l3.4 3.4L4 11.4l-2.5 2.5 4.9-4.9L8.8 11l1.3-1.3-3.4-3.4zM11 3l2.5 2.5-4.9 4.9L7.2 9 10.6 5.6l-3.4-3.4L14.5 5.5z"/></svg>
       &lt;/&gt; My Code
     </button>
+    <button class="nav-tab" data-panel="agents">
+      <svg viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 12.5a5.5 5.5 0 110-11 5.5 5.5 0 010 11z"/><circle cx="8" cy="8" r="2"/></svg>
+      Agents
+    </button>
+    <button class="nav-tab" data-panel="settings">
+      <svg viewBox="0 0 16 16"><path d="M8 4.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zM8 2a6 6 0 100 12A6 6 0 008 2z"/><path d="M6.5 1h3v1.5l.7.4 1.1-.2 1.1.6 1.2-.4.7 1.2.8 1-.3 1.2 1 .9-.3 1.3.9 1-.7 1.1v1.4h-1.5l-.6.7.2 1.1-.6 1.1.4 1.2-1.2.7-1 .8-1.2-.3-.9 1-1.3-.3-1 .9-1.1-.7V13.5l1.1-.7.9 1 1.2-.3 1 .8.7-1.2-.2-1.1.6-1.1-.4-1.2H2.5v-1.4l.7-1.1-.3-1.3 1-.9-.3-1.2.8-1-.7-1.2 1.2-.4 1.1.6 1.1-.2.7-.4V1z"/></svg>
+      Settings
+    </button>
   </div>
 
   <div class="sidebar-content" id="sidebarContent">
@@ -793,80 +1232,245 @@ body{
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 const AI_MODELS = {
-  'nemotron':        { label: 'Nemotron 3 Super 120B', provider:'nim' },
-  'claude-4-sonnet': { label: 'Claude 4 Sonnet',        provider:'anthropic' },
-  'claude-4-opus':   { label: 'Claude 4 Opus',           provider:'anthropic' },
-  'gpt-4o':          { label: 'GPT-4o',                 provider:'openai' },
-  'gpt-4-turbo':     { label: 'GPT-4 Turbo',            provider:'openai' },
-  'gemini-2-flash':  { label: 'Gemini 2.0 Flash',       provider:'gemini' },
-  'llama-3-1-405b':  { label: 'Llama 3.1 405B',         provider:'groq' },
-  'deepseek-v3':     { label: 'DeepSeek V3',             provider:'deepseek' },
+  // ── NVIDIA ──
+  'nvidia-nemotron':  { label: 'Nemotron 3 Ultra 550B',   provider:'nvidia',    group:'NVIDIA' },
+  'nvidia-kimi-k2':   { label: 'Kimi K2.6',               provider:'nvidia',    group:'NVIDIA' },
+  'nvidia-glm':       { label: 'GLM-5.1',                  provider:'nvidia',    group:'NVIDIA' },
+  'nvidia-deepseek':  { label: 'DeepSeek V4 Pro',          provider:'nvidia',    group:'NVIDIA' },
+  'nvidia-mistral':   { label: 'Mistral Small 4 119B',    provider:'nvidia',    group:'NVIDIA' },
+  'nvidia-phi4-mm':   { label: 'Phi-4 Multimodal 8B',    provider:'nvidia',    group:'NVIDIA' },
+  'nvidia-llama-vl':  { label: 'Llama 3.1 Nemotron VL',   provider:'nvidia',    group:'NVIDIA' },
+  // ── Kimi AI ──
+  'kimi-v1':         { label: 'Kimi V1 128K',             provider:'kimi',      group:'Kimi' },
+  // ── OpenRouter ──
+  'claude-3.5-sonnet': { label: 'Claude 3.5 Sonnet',      provider:'openrouter', group:'OpenRouter' },
+  'qwen-3-7b':        { label: 'Qwen 3.7B',               provider:'openrouter', group:'OpenRouter' },
+  'grok-4':           { label: 'Grok-4.3',                provider:'openrouter', group:'OpenRouter' },
+  'deepseek-r1':      { label: 'DeepSeek R1 (Reasoning)',  provider:'deepseek',  group:'DeepSeek' },
+  // ── OpenAI ──
+  'gpt-4o':           { label: 'GPT-4o',                  provider:'openai',    group:'OpenAI' },
+  'gpt-4o-mini':      { label: 'GPT-4o Mini',             provider:'openai',    group:'OpenAI' },
+  'gpt-4-turbo':      { label: 'GPT-4 Turbo',             provider:'openai',    group:'OpenAI' },
+  // ── Google ──
+  'gemini-2-flash':   { label: 'Gemini 2.0 Flash',        provider:'gemini',    group:'Gemini' },
+  'gemini-2-pro':     { label: 'Gemini 2.0 Pro',          provider:'gemini',    group:'Gemini' },
+  // ── Groq ──
+  'llama-3.1-70b':   { label: 'Llama 3.1 70B',           provider:'groq',      group:'Groq' },
+  'llama-3.1-8b':    { label: 'Llama 3.1 8B',            provider:'groq',      group:'Groq' },
+  'mixtral-8x7b':    { label: 'Mixtral 8x7B',            provider:'groq',      group:'Groq' },
+  // ── DeepSeek ──
+  'deepseek-v3':      { label: 'DeepSeek V3',              provider:'deepseek',  group:'DeepSeek' },
 };
 const ACCENT = '#E05C2A';
 
 // ── INTEGRATION DEFINITIONS ───────────────────────────────────────────────────
 const INTEG_DEFS = [
+  // ── AI MODELS ──────────────────────────────────────────────────────────────
   {
-    id:'github', name:'GitHub', icon:'&#128187;', desc:'Repos, issues, pull requests & code search',
+    id:'kimi', name:'Kimi AI', icon:'&#128187;', desc:'Moonshot AI — powerful reasoning and code',
+    docsUrl:'https://platform.moonshot.cn/docs',
+    testUrl:'KIMI', testEndpoint:null, group:'AI',
+    envKey:'KIMI_API_KEY', label:'Kimi API Key', hint:'platform.moonshot.cn → API Keys',
+  },
+  // ── NVIDIA ─────────────────────────────────────────────────────────────────
+  {
+    id:'nvidia', name:'NVIDIA NIM', icon:'&#127773;', desc:'NVIDIA AI Foundation Models — free tier',
+    docsUrl:'https://developer.nvidia.com/nim',
+    testUrl:'NVIDIA', testEndpoint:null, group:'AI',
+    envKey:'NVIDIA_API_KEY_1', label:'NVIDIA API Key', hint:'build.nvidia.com → API Keys (free available)',
+  },
+  // ── SEARCH & SCRAPING ───────────────────────────────────────────────────────
+  {
+    id:'tavily', name:'Tavily', icon:'&#128269;', desc:'Live web search with citations',
+    docsUrl:'https://docs.tavily.com',
+    testUrl:'POST', testEndpoint:'https://api.tavily.com/search', group:'Search',
+    envKey:'TAVILY_API_KEY', label:'Tavily API Key', hint:'app.tavily.com → API Key',
+  },
+  {
+    id:'exa', name:'Exa Search', icon:'&#128270;', desc:'Deep semantic web search',
+    docsUrl:'https://exa.ai',
+    testUrl:'POST', testEndpoint:'https://api.exa.ai/search', group:'Search',
+    envKey:'EXA_API_KEY', label:'Exa API Key', hint:'exa.ai → Dashboard → API',
+  },
+  {
+    id:'scrapfly', name:'ScrapFly', icon:'&#127760;', desc:'Web scraper with JS rendering',
+    docsUrl:'https://scrapfly.io/docs',
+    testUrl:'SCRAPFLY', testEndpoint:null, group:'Search',
+    envKey:'SCRAPFLY_API_KEY', label:'ScrapFly API Key', hint:'scrapfly.io → Dashboard',
+  },
+  {
+    id:'firecrawl', name:'Firecrawl', icon:'&#128293;', desc:'AI-powered web scraper',
+    docsUrl:'https://docs.firecrawl.dev',
+    testUrl:'FIRECRAWL', testEndpoint:null, group:'Search',
+    envKey:'FIRECRAWL_API_KEY', label:'Firecrawl API Key', hint:'firecrawl.dev → API Key',
+  },
+  {
+    id:'scrapingbee', name:'ScrapingBee', icon:'&#127761;', desc:'Headless browser scraper',
+    docsUrl:'https://www.scrapingbee.com/docs',
+    testUrl:'SCRAPINGBEE', testEndpoint:null, group:'Search',
+    envKey:'SCRAPINGBEE_API_KEY', label:'ScrapingBee API Key', hint:'app.scrapingbee.com → API',
+  },
+  // ── DEPLOY & DEVOPS ──────────────────────────────────────────────────────────
+  {
+    id:'github', name:'GitHub', icon:'&#128187;', desc:'Repos, issues, pull requests & code',
     docsUrl:'https://docs.github.com/rest',
-    testUrl:'GET', testEndpoint:'https://api.github.com/user',
-    envKey:'GITHUB_TOKEN', label:'GitHub Personal Access Token', hint:'github.com → Settings → Developer settings → Personal access tokens',
+    testUrl:'GET', testEndpoint:'https://api.github.com/user', group:'Deploy',
+    envKey:'GITHUB_TOKEN', label:'GitHub Personal Access Token', hint:'github.com → Settings → Developer settings',
   },
   {
     id:'railway', name:'Railway', icon:'&#128640;', desc:'Deploy and manage Railway deployments',
     docsUrl:'https://docs.railway.app/reference/api',
-    testUrl:'GET', testEndpoint:'https://backboard.railway.app/project',
-    envKey:'RAILWAY_TOKEN', label:'Railway API Token', hint:'dashboard.railway.app → Account Settings → API Tokens',
+    testUrl:'GET', testEndpoint:'https://backboard.railway.app/project', group:'Deploy',
+    envKey:'RAILWAY_TOKEN', label:'Railway API Token', hint:'dashboard.railway.app → Account Settings',
   },
   {
     id:'replit', name:'Replit', icon:'&#9881;', desc:'Run code in the browser instantly',
     docsUrl:'https://docs.replit.com',
-    testUrl:'REPLIT', testEndpoint:null,
+    testUrl:'REPLIT', testEndpoint:null, group:'Deploy',
     envKey:'REPLIT_TOKEN', label:'Replit API Token', hint:'replit.com → Account → API Token',
   },
   {
     id:'flyio', name:'Fly.io', icon:'&#127759;', desc:'Deploy containers globally in seconds',
     docsUrl:'https://fly.io/docs/flyctl/',
-    testUrl:'FLYIO', testEndpoint:null,
-    envKey:'FLY_API_TOKEN', label:'Fly.io API Token', hint:'fly.io → Account → Tokens → Create token',
+    testUrl:'FLYIO', testEndpoint:null, group:'Deploy',
+    envKey:'FLY_API_TOKEN', label:'Fly.io API Token', hint:'fly.io → Account → Tokens',
   },
   {
-    id:'websearch', name:'Web Search', icon:'&#128269;', desc:'Live web search with citations',
-    docsUrl:'https://developers.tavily.com',
-    testUrl:'TAVILY', testEndpoint:'https://api.tavily.com/search',
-    envKey:'TAVILY_API_KEY', label:'Tavily API Key', hint:'app.tavily.com → API Key',
+    id:'steel', name:'Steel.dev', icon:'&#9881;', desc:'Browser search API for automation',
+    docsUrl:'https://steel.dev/docs',
+    testUrl:'STEEL', testEndpoint:null, group:'Deploy',
+    envKey:'STEEL_API_KEY', label:'Steel.dev API Key', hint:'steel.dev → API Key',
+  },
+  // ── AI TOOLS ─────────────────────────────────────────────────────────────────
+  {
+    id:'composio', name:'Composio', icon:'&#9889;', desc:'100+ tool integrations — GitHub, Notion, Slack…',
+    docsUrl:'https://docs.composio.dev',
+    testUrl:'COMPOSIO', testEndpoint:null, group:'Tools',
+    envKey:'COMPOSIO_API_KEY', label:'Composio API Key', hint:'app.composio.dev → API Key',
   },
   {
-    id:'httpfetch', name:'HTTP Fetch', icon:'&#128279;', desc:'Call any REST API directly from chat',
-    docsUrl:'https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API',
-    testUrl:'NONE', testEndpoint:null,
-    envKey:'HTTP_API_KEY', label:'Custom API Key (optional)', hint:'Set per-request in chat with /fetch',
+    id:'e2b', name:'E2B Sandbox', icon:'&#128187;', desc:'AI code execution sandbox',
+    docsUrl:'https://e2b.dev/docs',
+    testUrl:'E2B', testEndpoint:null, group:'Tools',
+    envKey:'E2B_API_KEY', label:'E2B API Key', hint:'e2b.dev → Dashboard → API Keys',
+  },
+  {
+    id:'langchain', name:'LangChain', icon:'&#10022;', desc:'LLM orchestration and agents',
+    docsUrl:'https://python.langchain.com/docs',
+    testUrl:'LANGCHAIN', testEndpoint:null, group:'Tools',
+    envKey:'LANGCHAIN_API_KEY', label:'LangChain API Key', hint:'python.langchain.com → API Key',
+  },
+  {
+    id:'massive', name:'Massive AI', icon:'&#127761;', desc:'Massive AI agent queries',
+    docsUrl:'https://massive.ai/docs',
+    testUrl:'MASSIVE', testEndpoint:null, group:'Tools',
+    envKey:'MASSIVE_API_KEY', label:'Massive API Key', hint:'massive.ai → API',
+  },
+  // ── SOCIAL ───────────────────────────────────────────────────────────────────
+  {
+    id:'discord', name:'Discord Bot', icon:'&#127744;', desc:'Automate Discord server management',
+    docsUrl:'https://discord.com/developers/docs',
+    testUrl:'DISCORD', testEndpoint:null, group:'Social',
+    envKey:'DISCORD_BOT_TOKEN', label:'Discord Bot Token', hint:'discord.com → Developer → Applications',
   },
   {
     id:'instagram', name:'Instagram', icon:'&#128247;', desc:'Post images and stories automatically',
     docsUrl:'https://developers.facebook.com/docs/instagram-api',
-    testUrl:'INSTAGRAM', testEndpoint:null,
+    testUrl:'INSTAGRAM', testEndpoint:null, group:'Social',
     envKey:'INSTAGRAM_TOKEN', label:'Instagram Access Token', hint:'developers.facebook.com → Instagram Graph API',
   },
   {
     id:'tiktok', name:'TikTok', icon:'&#127926;', desc:'Auto-generate and post TikTok videos',
     docsUrl:'https://developers.tiktok.com/',
-    testUrl:'TIKTOK', testEndpoint:null,
+    testUrl:'TIKTOK', testEndpoint:null, group:'Social',
     envKey:'TIKTOK_TOKEN', label:'TikTok Access Token', hint:'developers.tiktok.com → App Access Token',
   },
+  // ── STORAGE ─────────────────────────────────────────────────────────────────
+  {
+    id:'r2storage', name:'Cloudflare R2', icon:'&#128193;', desc:'S3-compatible object storage',
+    docsUrl:'https://developers.cloudflare.com/r2',
+    testUrl:'NONE', testEndpoint:null, group:'Storage',
+    envKey:'R2_ACCOUNT_ID', label:'R2 Account ID', hint:'dash.cloudflare.com → R2 → Manage',
+  },
+  // ── INFRA ────────────────────────────────────────────────────────────────────
+  {
+    id:'pinecone', name:'Pinecone', icon:'&#128200;', desc:'Vector database for embeddings',
+    docsUrl:'https://docs.pinecone.io',
+    testUrl:'PINECONE', testEndpoint:null, group:'Infra',
+    envKey:'PINECONE_API_KEY', label:'Pinecone API Key', hint:'app.pinecone.io → API Keys',
+  },
+  {
+    id:'screenshotone', name:'ScreenshotOne', icon:'&#128247;', desc:'Website screenshots with API',
+    docsUrl:'https://screenshotone.com/docs',
+    testUrl:'SCREENSHOTONE', testEndpoint:null, group:'Infra',
+    envKey:'SCREENSHOTONE_API_KEY', label:'ScreenshotOne Key', hint:'screenshotone.com → API',
+  },
+  // ── OBSERVABILITY ─────────────────────────────────────────────────────────────
+  {
+    id:'helicone', name:'Helicone', icon:'&#128065;', desc:'AI observability and analytics',
+    docsUrl:'https://docs.helicone.ai',
+    testUrl:'HELICONE', testEndpoint:null, group:'Monitor',
+    envKey:'HELICONE_API_KEY', label:'Helicone API Key', hint:'app.helicone.ai → API Key',
+  },
+  {
+    id:'inngest', name:'Inngest', icon:'&#9889;', desc:'Event-driven serverless functions',
+    docsUrl:'https://api-docs.inngest.com',
+    testUrl:'INNGEST', testEndpoint:null, group:'Monitor',
+    envKey:'INNGEST_API_KEY', label:'Inngest API Key', hint:'app.inngest.com → API Key',
+  },
 ];
+
+// ── AI AGENTS (for agents grid) ───────────────────────────────────────────────
+const AGENT_DEFS = {
+  'content': [
+    { id:'ai-chat', name:'AI Chat', icon:'&#129302;', desc:'General conversation' },
+    { id:'ai-code', name:'AI Code', icon:'&#128187;', desc:'Code generation & review' },
+    { id:'ai-image', name:'AI Image', icon:'&#127912;', desc:'Generate images' },
+    { id:'ai-video', name:'AI Video', icon:'&#127916;', desc:'Generate videos' },
+    { id:'ai-vision', name:'AI Vision', icon:'&#128065;', desc:'Image analysis' },
+    { id:'ai-slides', name:'AI Slides', icon:'&#128200;', desc:'Presentation maker' },
+  ],
+  'search': [
+    { id:'tavily', name:'Tavily', icon:'&#128269;', desc:'Web search + citations' },
+    { id:'exa', name:'Exa', icon:'&#128270;', desc:'Deep semantic search' },
+    { id:'scrapfly', name:'ScrapFly', icon:'&#127760;', desc:'Web scraping' },
+    { id:'firecrawl', name:'Firecrawl', icon:'&#128293;', desc:'AI web scraper' },
+  ],
+  'deploy': [
+    { id:'github', name:'GitHub', icon:'&#128187;', desc:'Repos & PRs' },
+    { id:'railway', name:'Railway', icon:'&#128640;', desc:'Deployments' },
+    { id:'replit', name:'Replit', icon:'&#9881;', desc:'Instant run' },
+    { id:'flyio', name:'Fly.io', icon:'&#127759;', desc:'Global deploy' },
+    { id:'composio', name:'Composio', icon:'&#9889;', desc:'100+ tools' },
+  ],
+  'social': [
+    { id:'discord', name:'Discord', icon:'&#127744;', desc:'Bot automation' },
+    { id:'instagram', name:'Instagram', icon:'&#128247;', desc:'Post content' },
+    { id:'tiktok', name:'TikTok', icon:'&#127926;', desc:'Video posts' },
+    { id:'massive', name:'Massive AI', icon:'&#127761;', desc:'AI agent queries' },
+  ],
+  'tools': [
+    { id:'e2b', name:'E2B', icon:'&#128187;', desc:'Code sandbox' },
+    { id:'langchain', name:'LangChain', icon:'&#10022;', desc:'LLM chains' },
+    { id:'inngest', name:'Inngest', icon:'&#9889;', desc:'Event functions' },
+    { id:'helicone', name:'Helicone', icon:'&#128065;', desc:'AI observability' },
+    { id:'pinecone', name:'Pinecone', icon:'&#128200;', desc:'Vector search' },
+  ],
+};
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let S = {
   mode: 'chat',
-  model: 'nemotron',
+  model: 'nvidia-nemotron',
   messages: [],
   chats: [],
   activeChat: null,
   darkMode: false,
   typing: false,
-  expandedInteg: null,    // which integration card is open
   integKeys: {},           // api key per integration id
+  enabledTools: [],         // which integrations are enabled for tool use
+  settingsCrons: [],        // { id, name, schedule, prompt, active }
+  enabledModels: Object.keys(AI_MODELS), // which models are visible
 };
 
 // ── INIT STATE FROM STORAGE ───────────────────────────────────────────────────
@@ -882,6 +1486,12 @@ function loadState(){
     if (chats) S.chats = JSON.parse(chats);
     const keys = localStorage.getItem('cc_integ_keys');
     if (keys) S.integKeys = JSON.parse(keys);
+    const tools = localStorage.getItem('cc_enabled_tools');
+    if (tools) S.enabledTools = JSON.parse(tools);
+    const crons = localStorage.getItem('cc_crons');
+    if (crons) S.settingsCrons = JSON.parse(crons);
+    const emods = localStorage.getItem('cc_enabled_models');
+    if (emods) S.enabledModels = JSON.parse(emods);
   } catch(e) {}
 }
 
@@ -892,6 +1502,9 @@ function saveState(){
     localStorage.setItem('cc_messages', JSON.stringify(S.messages));
     localStorage.setItem('cc_chats', JSON.stringify(S.chats));
     localStorage.setItem('cc_integ_keys', JSON.stringify(S.integKeys));
+    localStorage.setItem('cc_enabled_tools', JSON.stringify(S.enabledTools));
+    localStorage.setItem('cc_crons', JSON.stringify(S.settingsCrons));
+    localStorage.setItem('cc_enabled_models', JSON.stringify(S.enabledModels));
   } catch(e) {}
 }
 
@@ -1004,26 +1617,60 @@ async function sendMsg(){
 async function aiReply(userText){
   S.typing = true;
   const typingId = addTyping();
-  const systemPrompt = `You are Claw Code, a helpful AI coding assistant. Be concise, friendly, and practical. Use code blocks for code.`;
-  const history = S.messages.slice(-10).map(m => ({role: m.role, content: m.content}));
+  const systemPrompt = `You are Claw Code, a helpful AI coding assistant. You have access to tools. Use them when needed — especially for web search, code execution, or API calls. Be concise, friendly, and practical. Use code blocks for code.`;
+  const history = S.messages.slice(-12).map(m => ({role: m.role, content: m.content}));
 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({model: S.model, messages: [{role:'system',content:systemPrompt},...history,{role:'user',content:userText}]})
+      body: JSON.stringify({
+        model: S.model,
+        messages: [{role:'system',content:systemPrompt},...history,{role:'user',content:userText}],
+        enabledTools: S.enabledTools,
+      })
     });
     if (res.ok) {
       const data = await res.json();
       removeTyping(typingId);
-      addMsg('ai', data.reply || data.content || 'No response.');
+
+      // Show tool call results inline
+      if (data.toolCalls && data.toolCalls.length > 0) {
+        const toolNames = data.toolCalls.map(t => t.name).join(', ');
+        const toolMsg = document.createElement('div');
+        toolMsg.className = 'tool-call-msg';
+        toolMsg.innerHTML = `<span class="tool-name">&#9889; Used tools:</span> ${esc(toolNames)}`;
+        const chatAreaEl = document.getElementById('chatArea');
+        const lastBubble = chatAreaEl.lastElementChild;
+        if (lastBubble) lastBubble.appendChild(toolMsg);
+
+        data.toolCalls.forEach(tc => {
+          if (tc.result) {
+            const resultStr = typeof tc.result === 'object' ? JSON.stringify(tc.result, null, 2).slice(0, 500) : String(tc.result);
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'tool-result-msg';
+            resultDiv.textContent = resultStr;
+            if (lastBubble) lastBubble.appendChild(resultDiv);
+          }
+          if (tc.error) {
+            const errDiv = document.createElement('div');
+            errDiv.className = 'tool-result-msg';
+            errDiv.style.borderColor = 'rgba(239,68,68,0.3)';
+            errDiv.style.color = '#EF4444';
+            errDiv.textContent = 'Error: ' + tc.error;
+            if (lastBubble) lastBubble.appendChild(errDiv);
+          }
+        });
+      }
+
+      addMsg('ai', data.reply || 'Tool executed. Ready for more.');
     } else { throw new Error('API error ' + res.status); }
   } catch(e) {
     removeTyping(typingId);
     if (userText.match(/^(write|make|create|build|generate|code|function|def|const|let|var|import)\s/i)) {
       await codeFromPrompt(userText);
     } else {
-      addMsg('ai', 'I can\'t reach the AI service right now. Try switching to Code mode and I\'ll write the code directly!\n\nTip: Configure an AI integration in the sidebar to enable chat.');
+      addMsg('ai', 'I can\'t reach the AI service right now. Configure your API keys in Settings → API Keys, then try again.\n\nTip: Add your NVIDIA or Kimi API key to enable AI chat!');
     }
   }
   S.typing = false;
@@ -1164,11 +1811,13 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
 
 function renderSidebarPanel(panel){
   sidebarContent.innerHTML = '';
-  if (panel === 'chats')       renderChats();
+  if (panel === 'chats')         renderChats();
   else if (panel === 'integrations') renderIntegrations();
-  else if (panel === 'files')   renderFiles();
-  else if (panel === 'pictures') renderPictures();
-  else if (panel === 'mycode')  renderMyCode();
+  else if (panel === 'files')     renderFiles();
+  else if (panel === 'pictures')  renderPictures();
+  else if (panel === 'mycode')    renderMyCode();
+  else if (panel === 'agents')    renderAgents();
+  else if (panel === 'settings')  renderSettings();
 }
 
 // ── INTEGRATIONS PANEL ────────────────────────────────────────────────────────
@@ -1192,6 +1841,7 @@ function renderIntegrations(){
           <div class="integ-desc">${esc(def.desc)}</div>
         </div>
         <div class="integ-right">
+          ${def.group ? `<span class="badge badge-group">${esc(def.group)}</span>` : ''}
           <label class="toggle" onclick="e=>e.stopPropagation()">
             <input type="checkbox" ${isEnabled ? 'checked' : ''} onchange="toggleIntegEnabled('${def.id}', this.checked)">
             <div class="toggle-track"></div>
@@ -1203,28 +1853,24 @@ function renderIntegrations(){
       </div>
       <div class="integ-expanded open">
         <div class="integ-actions">
-          <button class="btn btn-doc" onclick="openDocs('${def.docsUrl}')">
-            <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M4 1h8l4 4v9H4V1zm7 1v3H5V2h6zM5 5h6v1H5V5z"/></svg>
+          <button class="btn-3d" onclick="openDocs('${def.docsUrl}')" style="font-size:11px;padding:5px 10px">
             Doc
           </button>
           ${isEnabled
-            ? `<button class="btn btn-activate" onclick="testInteg('${def.id}')">
-                <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 12.5a5.5 5.5 0 110-11 5.5 5.5 0 010 11z"/></svg>
-                Test
+            ? `<button class="btn-3d btn-3d-accent" onclick="testInteg('${def.id}')" style="font-size:11px;padding:5px 12px">
+                &#9889; Test
                </button>`
-            : `<button class="btn btn-activate" disabled>
-                <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 12.5a5.5 5.5 0 110-11 5.5 5.5 0 010 11z"/></svg>
-                Activate
+            : `<button class="btn-3d" disabled style="font-size:11px;padding:5px 12px;opacity:0.5">
+                &#9889; Activate
                </button>`
           }
-          <button class="btn btn-configure" onclick="openApiModal('${def.id}')">
-            <svg viewBox="0 0 16 16"><path d="M8 1a2 2 0 012 2v1.586l.707.707a1 1 0 01.293.707v.293a1 1 0 01-.293.707L10.414 8H13a2 2 0 012 2v3a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 011-1h2.586l-.293-.293a1 1 0 01-.707-.293H3a1 1 0 01-1-1V2a1 1 0 011-1h5z"/></svg>
-            ${hasKey ? 'Update Key' : 'Configure Key'}
+          <button class="btn-3d btn-3d-green" onclick="openApiModal('${def.id}')" style="flex:1;font-size:11px;padding:5px 10px">
+            ${hasKey ? '&#9998; Update Key' : '&#128273; Configure Key'}
           </button>
         </div>
         <div class="integ-api-status">
           <span class="dot ${hasKey ? 'ok' : 'missing'}"></span>
-          <span>${hasKey ? 'API key configured' : 'No API key — integration disabled'}</span>
+          <span>${hasKey ? 'API key configured — ' + def.envKey : 'No API key — integration disabled'}</span>
         </div>
       </div>
     `;
@@ -1358,11 +2004,357 @@ window.saveApiKey = function(){
   if (!key) { showToast('Enter a valid key', 'error'); return; }
 
   S.integKeys[currentModalInteg.id] = key;
+  // Enable this tool by default when a key is added
+  if (!S.enabledTools.includes(currentModalInteg.id)) {
+    S.enabledTools.push(currentModalInteg.id);
+  }
   saveState();
   closeApiModal();
   showToast(currentModalInteg.name + ' API key saved!', 'success');
-  if (S.expandedInteg) renderIntegrations();
+  renderIntegrations();
 };
+
+// ── AGENTS PANEL ──────────────────────────────────────────────────────────────
+let agentsActiveTab = 'content';
+
+function renderAgents(){
+  const c = document.createElement('div');
+
+  // Category tabs
+  const tabs = document.createElement('div');
+  tabs.className = 'settings-tabs';
+  tabs.style.flexWrap = 'wrap';
+  Object.keys(AGENT_DEFS).forEach(group => {
+    const btn = document.createElement('button');
+    btn.className = 'settings-tab' + (agentsActiveTab === group ? ' active' : '');
+    btn.textContent = {content:'&#127918; AI',search:'&#128269; Search',deploy:'&#128640; Deploy',social:'&#127744; Social',tools:'&#9889; Tools'}[group] || group;
+    btn.style.fontSize = '11px';
+    btn.style.padding = '4px 10px';
+    btn.onclick = () => { agentsActiveTab = group; renderAgents(); };
+    tabs.appendChild(btn);
+  });
+  c.appendChild(tabs);
+
+  // Agent grid with glow
+  const glowWrap = document.createElement('div');
+  glowWrap.className = 'agents-glow';
+
+  const agents = AGENT_DEFS[agentsActiveTab] || [];
+  const grid = document.createElement('div');
+  grid.className = 'agent-grid';
+
+  agents.forEach(agent => {
+    const card = document.createElement('div');
+    card.className = 'agent-card';
+    card.innerHTML = `
+      <div class="agent-icon-wrap">${agent.icon}</div>
+      <div class="agent-label">${esc(agent.name)}</div>
+    `;
+    card.onclick = () => activateAgent(agent);
+    grid.appendChild(card);
+  });
+
+  glowWrap.appendChild(grid);
+  c.appendChild(glowWrap);
+  sidebarContent.appendChild(c);
+}
+
+function activateAgent(agent){
+  showToast('Activating ' + agent.name + '...', 'info');
+  if (agent.id === 'ai-chat') {
+    // Switch to chat mode
+    const chatTab = document.querySelector('[data-mode="chat"]');
+    if (chatTab) chatTab.click();
+    closeSidebar();
+    msgInput.focus();
+  } else if (agent.id === 'ai-code') {
+    const codeTab = document.querySelector('[data-mode="code"]');
+    if (codeTab) codeTab.click();
+    closeSidebar();
+  } else if (agent.id === 'ai-image') {
+    const imgTab = document.querySelector('[data-mode="image"]');
+    if (imgTab) imgTab.click();
+    closeSidebar();
+  } else if (agent.id === 'ai-video') {
+    const vidTab = document.querySelector('[data-mode="video"]');
+    if (vidTab) vidTab.click();
+    closeSidebar();
+  } else if (agent.id === 'ai-vision') {
+    const visTab = document.querySelector('[data-mode="vision"]');
+    if (visTab) visTab.click();
+    closeSidebar();
+  } else {
+    // Open integrations and focus the right one
+    closeSidebar();
+    const integTab = document.querySelector('[data-panel="integrations"]');
+    if (integTab) integTab.click();
+  }
+}
+
+// ── SETTINGS PANEL ────────────────────────────────────────────────────────────
+let settingsTab = 'models';
+
+function renderSettings(){
+  const c = document.createElement('div');
+  const tabs = document.createElement('div');
+  tabs.className = 'settings-tabs';
+  ['models','apikeys','crons'].forEach(tab => {
+    const btn = document.createElement('button');
+    btn.className = 'settings-tab' + (settingsTab === tab ? ' active' : '');
+    btn.textContent = {models:'&#9881; Models',apikeys:'&#128273; API Keys',crons:'&#128337; Cron Jobs'}[tab];
+    btn.onclick = () => { settingsTab = tab; renderSettings(); };
+    tabs.appendChild(btn);
+  });
+  c.appendChild(tabs);
+
+  if (settingsTab === 'models') {
+    c.appendChild(renderModelsTab());
+  } else if (settingsTab === 'apikeys') {
+    c.appendChild(renderApiKeysTab());
+  } else if (settingsTab === 'crons') {
+    c.appendChild(renderCronsTab());
+  }
+
+  sidebarContent.appendChild(c);
+}
+
+function renderModelsTab(){
+  const wrapper = document.createElement('div');
+
+  // Provider status
+  wrapper.innerHTML = `<div class="settings-section-title">Provider Status</div>`;
+
+  const statusGrid = document.createElement('div');
+  statusGrid.className = 'provider-status-grid';
+  const providers = [
+    { name:'NVIDIA', icon:'&#127773;', envKey:'NVIDIA_API_KEY_1' },
+    { name:'Kimi AI', icon:'&#128187;', envKey:'KIMI_API_KEY' },
+    { name:'OpenRouter', icon:'&#127918;', envKey:'OPENROUTER_API_KEY' },
+    { name:'OpenAI', icon:'&#127761;', envKey:'OPENAI_API_KEY' },
+    { name:'Gemini', icon:'&#127760;', envKey:'GEMINI_API_KEY' },
+    { name:'Groq', icon:'&#9881;', envKey:'GROQ_API_KEY' },
+    { name:'DeepSeek', icon:'&#10022;', envKey:'DEEPSEEK_API_KEY' },
+    { name:'Composio', icon:'&#9889;', envKey:'COMPOSIO_API_KEY' },
+  ];
+  providers.forEach(p => {
+    const chip = document.createElement('div');
+    chip.className = 'provider-status-chip';
+    chip.innerHTML = `<span class="dot ${S.enabledTools.includes(p.envKey) ? 'on' : 'off'}"></span>${p.icon} ${esc(p.name)}`;
+    statusGrid.appendChild(chip);
+  });
+  wrapper.appendChild(statusGrid);
+
+  wrapper.innerHTML += `<div class="settings-section-title">Toggle AI Models</div>`;
+
+  const list = document.createElement('div');
+  list.className = 'model-toggle-list';
+
+  Object.entries(AI_MODELS).forEach(([id, cfg]) => {
+    const isEnabled = S.enabledModels.includes(id);
+    const item = document.createElement('div');
+    item.className = 'model-toggle-item';
+    item.innerHTML = `
+      <div class="model-toggle-icon">${cfg.icon || '&#127918;'}</div>
+      <div class="model-toggle-info">
+        <div class="model-toggle-name">${esc(cfg.label)}</div>
+        <div class="model-toggle-provider">${esc(cfg.group)} &middot; ${esc(cfg.provider)}</div>
+      </div>
+      <label class="model-toggle toggle-switch">
+        <input type="checkbox" ${isEnabled ? 'checked' : ''} onchange="toggleModel('${id}', this.checked)">
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+    `;
+    list.appendChild(item);
+  });
+  wrapper.appendChild(list);
+  return wrapper;
+}
+
+window.toggleModel = function(id, enabled){
+  if (enabled) {
+    if (!S.enabledModels.includes(id)) S.enabledModels.push(id);
+  } else {
+    S.enabledModels = S.enabledModels.filter(m => m !== id);
+  }
+  saveState();
+  // Update the header dropdown
+  populateModelDropdown();
+  showToast(AI_MODELS[id]?.label + ' ' + (enabled ? 'enabled' : 'disabled'), 'success');
+};
+
+function populateModelDropdown(){
+  const sel = document.getElementById('modelSelect');
+  sel.innerHTML = '';
+  const groups = {};
+  Object.entries(AI_MODELS).forEach(([id, cfg]) => {
+    if (!S.enabledModels.includes(id)) return;
+    const grp = cfg.group || 'Other';
+    if (!groups[grp]) groups[grp] = [];
+    groups[grp].push({id, label: cfg.label, provider: cfg.provider, icon: cfg.icon || '&#127918;'});
+  });
+  Object.entries(groups).forEach(([grp, models]) => {
+    const optgroup = document.createElement('optgroup');
+    optgroup.label = grp;
+    models.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.id;
+      opt.textContent = m.label + ' (' + m.provider + ')';
+      if (m.id === S.model) opt.selected = true;
+      optgroup.appendChild(opt);
+    });
+    sel.appendChild(optgroup);
+  });
+  if (!S.enabledModels.includes(S.model)) {
+    S.model = S.enabledModels[0] || Object.keys(AI_MODELS)[0];
+    sel.value = S.model;
+  }
+  document.getElementById('engineName').textContent = AI_MODELS[S.model]?.label || S.model;
+}
+
+function renderApiKeysTab(){
+  const wrapper = document.createElement('div');
+  const list = document.createElement('div');
+  list.className = 'api-key-list';
+
+  const KEY_DEFS = [
+    { id:'nvidia', name:'NVIDIA API Key', icon:'&#127773;', hint:'build.nvidia.com → free tier available', key:'NVIDIA_API_KEY_1' },
+    { id:'kimi', name:'Kimi API Key', icon:'&#128187;', hint:'platform.moonshot.cn', key:'KIMI_API_KEY' },
+    { id:'openai', name:'OpenAI API Key', icon:'&#127761;', hint:'platform.openai.com', key:'OPENAI_API_KEY' },
+    { id:'openrouter', name:'OpenRouter API Key', icon:'&#127918;', hint:'openrouter.ai', key:'OPENROUTER_API_KEY' },
+    { id:'gemini', name:'Gemini API Key', icon:'&#127760;', hint:'aistudio.google.com', key:'GEMINI_API_KEY' },
+    { id:'groq', name:'Groq API Key', icon:'&#9881;', hint:'console.groq.com (free tier)', key:'GROQ_API_KEY' },
+    { id:'deepseek', name:'DeepSeek API Key', icon:'&#10022;', hint:'platform.deepseek.com', key:'DEEPSEEK_API_KEY' },
+    { id:'composio', name:'Composio API Key', icon:'&#9889;', hint:'app.composio.dev', key:'COMPOSIO_API_KEY' },
+    { id:'tavily', name:'Tavily API Key', icon:'&#128269;', hint:'app.tavily.com', key:'TAVILY_API_KEY' },
+    { id:'exa', name:'Exa API Key', icon:'&#128270;', hint:'exa.ai', key:'EXA_API_KEY' },
+    { id:'scrapfly', name:'ScrapFly API Key', icon:'&#127760;', hint:'scrapfly.io', key:'SCRAPFLY_API_KEY' },
+    { id:'firecrawl', name:'Firecrawl API Key', icon:'&#128293;', hint:'firecrawl.dev', key:'FIRECRAWL_API_KEY' },
+    { id:'discord', name:'Discord Bot Token', icon:'&#127744;', hint:'discord.com/developers', key:'DISCORD_BOT_TOKEN' },
+    { id:'github', name:'GitHub Token', icon:'&#128187;', hint:'github.com/settings/tokens', key:'GITHUB_TOKEN' },
+    { id:'railway', name:'Railway Token', icon:'&#128640;', hint:'dashboard.railway.app', key:'RAILWAY_TOKEN' },
+    { id:'e2b', name:'E2B API Key', icon:'&#128187;', hint:'e2b.dev', key:'E2B_API_KEY' },
+    { id:'helicone', name:'Helicone API Key', icon:'&#128065;', hint:'helicone.ai', key:'HELICONE_API_KEY' },
+    { id:'inngest', name:'Inngest API Key', icon:'&#9889;', hint:'app.inngest.com', key:'INNGEST_API_KEY' },
+  ];
+
+  KEY_DEFS.forEach(k => {
+    const item = document.createElement('div');
+    item.className = 'api-key-item';
+    const hasKey = !!S.integKeys[k.id];
+    item.innerHTML = `
+      <div class="api-key-header">
+        <span class="api-key-icon">${k.icon}</span>
+        <span class="api-key-name">${esc(k.name)}</span>
+        <span class="api-key-badge ${hasKey ? '' : 'missing'}">${hasKey ? '&#10003; Set' : 'Not set'}</span>
+      </div>
+      <input class="api-key-input" type="password" placeholder="${esc(k.hint)}" value="${esc(S.integKeys[k.id] || '')}"
+        onchange="saveKeyDirect('${k.id}', this.value)" onkeydown="if(event.key==='Enter')this.blur()">
+    `;
+    list.appendChild(item);
+  });
+  wrapper.appendChild(list);
+  return wrapper;
+}
+
+window.saveKeyDirect = function(id, value){
+  if (value.trim()) {
+    S.integKeys[id] = value.trim();
+    if (!S.enabledTools.includes(id)) S.enabledTools.push(id);
+    showToast('API key saved!', 'success');
+  } else {
+    delete S.integKeys[id];
+    S.enabledTools = S.enabledTools.filter(t => t !== id);
+    showToast('API key cleared', 'info');
+  }
+  saveState();
+};
+
+function renderCronsTab(){
+  const wrapper = document.createElement('div');
+
+  wrapper.innerHTML = `
+    <div style="font-size:11px;color:var(--text-3);margin-bottom:12px">
+      Cron jobs run AI tasks on a schedule. Times are in UTC.
+    </div>
+  `;
+
+  const list = document.createElement('div');
+  list.className = 'cron-list';
+
+  if (S.settingsCrons.length === 0) {
+    list.innerHTML = `
+      <div style="text-align:center;padding:20px;color:var(--text-3);font-size:12px">
+        No cron jobs yet.<br>Add one below to automate AI tasks.
+      </div>
+    `;
+  }
+
+  S.settingsCrons.forEach((cron, i) => {
+    const item = document.createElement('div');
+    item.className = 'cron-item';
+    item.innerHTML = `
+      <div class="cron-header">
+        <div class="cron-name">${esc(cron.name)}</div>
+        <div class="cron-schedule">${esc(cron.schedule)}</div>
+        <label class="toggle" style="transform:scale(0.85)">
+          <input type="checkbox" ${cron.active ? 'checked' : ''} onchange="toggleCron(${i}, this.checked)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="cron-prompt">${esc(cron.prompt)}</div>
+      <div class="cron-actions">
+        <button class="btn-3d" style="flex:1;font-size:11px;padding:5px" onclick="runCronNow(${i})">&#9654; Run Now</button>
+        <button class="btn-3d" style="font-size:11px;padding:5px;color:#EF4444" onclick="deleteCron(${i})">&#10005;</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+  wrapper.appendChild(list);
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-cron-btn';
+  addBtn.innerHTML = '&#10010; Add Cron Job';
+  addBtn.onclick = addCronJob;
+  wrapper.appendChild(addBtn);
+
+  return wrapper;
+}
+
+window.toggleCron = function(i, active){
+  S.settingsCrons[i].active = active;
+  saveState();
+  showToast('Cron job ' + (active ? 'enabled' : 'paused'), 'success');
+};
+
+window.runCronNow = async function(i){
+  const cron = S.settingsCrons[i];
+  showToast('Running: ' + cron.name + '...', 'info');
+  // Set input and trigger AI reply
+  const input = document.getElementById('msgInput');
+  if (input) { input.value = cron.prompt; sendMsg(); }
+};
+
+window.deleteCron = function(i){
+  S.settingsCrons.splice(i, 1);
+  saveState();
+  renderSettings();
+  showToast('Cron job deleted', 'info');
+};
+
+function addCronJob(){
+  const name = prompt('Cron job name (e.g. Daily digest):');
+  if (!name) return;
+  const schedule = prompt('Schedule (cron format, e.g. "0 9 * * *" for daily at 9am UTC):');
+  if (!schedule) return;
+  const prompt_text = prompt('AI prompt to run:');
+  if (!prompt_text) return;
+  S.settingsCrons.push({ id: 'cron_' + Date.now(), name, schedule, prompt: prompt_text, active: true });
+  saveState();
+  renderSettings();
+  showToast('Cron job "' + name + '" created!', 'success');
+}
 
 // ── CHATS PANEL ───────────────────────────────────────────────────────────────
 function renderChats(){
@@ -1529,12 +2521,11 @@ document.addEventListener('keydown', e => {
 // ── INIT ──────────────────────────────────────────────────────────────────────
 loadState();
 applyDarkMode();
+populateModelDropdown();
 if (S.messages.length > 0) {
   welcome.style.display = 'none';
   S.messages.forEach(m => addMsg(m.role, m.content));
 }
-engineName.textContent = AI_MODELS[S.model].label;
-modelSel.value = S.model;
 </script>
 </body>
 </html>
