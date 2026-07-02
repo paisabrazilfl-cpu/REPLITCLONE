@@ -2,7 +2,8 @@ const express = require('express');
 const http = require('http');
 const { WebSocketServer } = require('ws');
 const initSqlJs = require('sql.js');
-const { verifyGoogleIdToken, signSession, verifySession, authOptional } = require('./auth');
+const { verifyGoogleIdToken, signSession, verifySession, authOptional, authRequired } = require('./auth');
+const { encrypt, decrypt } = require('./crypto');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -651,6 +652,44 @@ async function initDb() {
       created_at INTEGER DEFAULT (strftime('%s','now')),
       last_seen INTEGER DEFAULT (strftime('%s','now'))
     );
+    CREATE TABLE IF NOT EXISTS user_api_keys (
+      user_id TEXT NOT NULL,
+      provider_id TEXT NOT NULL,
+      encrypted_key TEXT NOT NULL,
+      updated_at INTEGER DEFAULT (strftime('%s','now')),
+      PRIMARY KEY (user_id, provider_id)
+    );
+    CREATE TABLE IF NOT EXISTS user_chats (
+      user_id TEXT NOT NULL,
+      chat_id TEXT NOT NULL,
+      name TEXT,
+      messages TEXT,
+      active INTEGER DEFAULT 0,
+      updated_at INTEGER DEFAULT (strftime('%s','now')),
+      PRIMARY KEY (user_id, chat_id)
+    );
+    CREATE TABLE IF NOT EXISTS user_pictures (
+      user_id TEXT NOT NULL,
+      url TEXT NOT NULL,
+      created_at INTEGER DEFAULT (strftime('%s','now'))
+    );
+    CREATE TABLE IF NOT EXISTS user_crons (
+      user_id TEXT NOT NULL,
+      cron_id TEXT NOT NULL,
+      name TEXT,
+      prompt TEXT,
+      schedule TEXT,
+      enabled INTEGER DEFAULT 1,
+      last_run INTEGER,
+      created_at INTEGER DEFAULT (strftime('%s','now')),
+      PRIMARY KEY (user_id, cron_id)
+    );
+    CREATE TABLE IF NOT EXISTS user_settings (
+      user_id TEXT NOT NULL,
+      key TEXT NOT NULL,
+      value TEXT,
+      PRIMARY KEY (user_id, key)
+    );
   `);
   saveTimer = setInterval(() => { if (dbDirty) { saveDb(); dbDirty = false; } }, 10_000);
   console.log('[DB] Initialized (sql.js)');
@@ -745,6 +784,143 @@ app.post('/auth/google', async (req, res) => {
 app.get('/auth/me', (req, res) => {
   if (!req.user) return res.json({ user: null });
   res.json({ user: req.user });
+});
+
+// ── PER-USER VAULT (encrypted API keys) ──────────────────────────────────────
+
+// List which providers the user has configured (does NOT return keys)
+app.get('/api/user/keys', authRequired, (req, res) => {
+  const rows = db.exec(`SELECT provider_id, updated_at FROM user_api_keys WHERE user_id = '${req.user.uid}'`);
+  const keys = rows.length > 0 ? rows[0].values.map(r => ({ provider: r[0], updated_at: r[1] })) : [];
+  res.json({ keys });
+});
+
+// Set/update a key (encrypted with master key before storage)
+app.put('/api/user/keys/:provider', authRequired, (req, res) => {
+  const { provider } = req.params;
+  const { key } = req.body;
+  if (!key) return res.status(400).json({ error: 'Missing key' });
+  try {
+    const enc = encrypt(key);
+    db.run(`INSERT OR REPLACE INTO user_api_keys (user_id, provider_id, encrypted_key, updated_at)
+            VALUES ('${req.user.uid}', '${provider.replace(/'/g, "''")}', '${enc.replace(/'/g, "''")}', strftime('%s','now'))`);
+    dbDirty = true;
+    res.json({ ok: true, provider });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Delete a key
+app.delete('/api/user/keys/:provider', authRequired, (req, res) => {
+  const { provider } = req.params;
+  db.run(`DELETE FROM user_api_keys WHERE user_id = '${req.user.uid}' AND provider_id = '${provider.replace(/'/g, "''")}'`);
+  dbDirty = true;
+  res.json({ ok: true });
+});
+
+// Get all decrypted keys for the authenticated user (for device sync)
+// Only accessible with a valid JWT — same security as a password manager
+app.get('/api/user/keys/all', authRequired, (req, res) => {
+  const rows = db.exec(`SELECT provider_id, encrypted_key FROM user_api_keys WHERE user_id = '${req.user.uid}'`);
+  const keys = {};
+  if (rows.length > 0) {
+    for (const [provider, enc] of rows[0].values) {
+      const dec = decrypt(enc);
+      if (dec) keys[provider] = dec;
+    }
+  }
+  res.json({ keys });
+});
+
+// Helper: get a user's decrypted key for a provider (used internally)
+function getUserApiKey(uid, provider) {
+  try {
+    const rows = db.exec(`SELECT encrypted_key FROM user_api_keys WHERE user_id = '${uid.replace(/'/g, "''")}' AND provider_id = '${provider.replace(/'/g, "''")}'`);
+    if (rows.length === 0 || rows[0].values.length === 0) return null;
+    return decrypt(rows[0].values[0][0]);
+  } catch (e) {
+    return null;
+  }
+}
+
+// ── PER-USER CHATS (chat history sync) ───────────────────────────────────────
+
+app.get('/api/user/chats', authRequired, (req, res) => {
+  const rows = db.exec(`SELECT chat_id, name, messages, active, updated_at FROM user_chats WHERE user_id = '${req.user.uid}' ORDER BY updated_at DESC`);
+  const chats = rows.length > 0 ? rows[0].values.map(r => ({
+    chat_id: r[0], name: r[1], messages: JSON.parse(r[2] || '[]'), active: r[3], updated_at: r[4]
+  })) : [];
+  res.json({ chats });
+});
+
+app.put('/api/user/chats/:chat_id', authRequired, (req, res) => {
+  const { chat_id } = req.params;
+  const { name, messages, active } = req.body;
+  const msgs = JSON.stringify(messages || []);
+  db.run(`INSERT OR REPLACE INTO user_chats (user_id, chat_id, name, messages, active, updated_at)
+          VALUES ('${req.user.uid}', '${chat_id.replace(/'/g, "''")}',
+                  '${(name || '').replace(/'/g, "''")}', '${msgs.replace(/'/g, "''")}',
+                  ${active ? 1 : 0}, strftime('%s','now'))`);
+  dbDirty = true;
+  res.json({ ok: true });
+});
+
+app.delete('/api/user/chats/:chat_id', authRequired, (req, res) => {
+  const { chat_id } = req.params;
+  db.run(`DELETE FROM user_chats WHERE user_id = '${req.user.uid}' AND chat_id = '${chat_id.replace(/'/g, "''")}'`);
+  dbDirty = true;
+  res.json({ ok: true });
+});
+
+// ── PER-USER SETTINGS ─────────────────────────────────────────────────────────
+
+app.get('/api/user/settings', authRequired, (req, res) => {
+  const rows = db.exec(`SELECT key, value FROM user_settings WHERE user_id = '${req.user.uid}'`);
+  const settings = {};
+  if (rows.length > 0) rows[0].values.forEach(r => { settings[r[0]] = r[1]; });
+  res.json({ settings });
+});
+
+app.put('/api/user/settings', authRequired, (req, res) => {
+  const { settings } = req.body;
+  if (!settings || typeof settings !== 'object') return res.status(400).json({ error: 'Missing settings' });
+  for (const [k, v] of Object.entries(settings)) {
+    db.run(`INSERT OR REPLACE INTO user_settings (user_id, key, value)
+            VALUES ('${req.user.uid}', '${k.replace(/'/g, "''")}', '${String(v).replace(/'/g, "''")}')`);
+  }
+  dbDirty = true;
+  res.json({ ok: true });
+});
+
+// ── PER-USER CRONS ────────────────────────────────────────────────────────────
+
+app.get('/api/user/crons', authRequired, (req, res) => {
+  const rows = db.exec(`SELECT cron_id, name, prompt, schedule, enabled, last_run FROM user_crons WHERE user_id = '${req.user.uid}' ORDER BY created_at`);
+  const crons = rows.length > 0 ? rows[0].values.map(r => ({
+    id: r[0], name: r[1], prompt: r[2], schedule: r[3], enabled: r[4] === 1, last_run: r[5]
+  })) : [];
+  res.json({ crons });
+});
+
+app.put('/api/user/crons/:cron_id', authRequired, (req, res) => {
+  const { cron_id } = req.params;
+  const { name, prompt, schedule, enabled } = req.body;
+  db.run(`INSERT OR REPLACE INTO user_crons (user_id, cron_id, name, prompt, schedule, enabled)
+          VALUES ('${req.user.uid}', '${cron_id.replace(/'/g, "''")}',
+                  '${(name || '').replace(/'/g, "''")}',
+                  '${(prompt || '').replace(/'/g, "''")}',
+                  '${(schedule || '').replace(/'/g, "''")}',
+                  ${enabled ? 1 : 0})`);
+  dbDirty = true;
+  res.json({ ok: true });
+});
+
+app.delete('/api/user/crons/:cron_id', authRequired, (req, res) => {
+  const { cron_id } = req.params;
+  db.run(`DELETE FROM user_crons WHERE user_id = '${req.user.uid}' AND cron_id = '${cron_id.replace(/'/g, "''")}'`);
+  dbDirty = true;
+  res.json({ ok: true });
 });
 
 // ── PROJECTS ──────────────────────────────────────────────────────────────────

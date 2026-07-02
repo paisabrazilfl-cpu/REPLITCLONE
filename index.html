@@ -2335,6 +2335,14 @@ window.saveApiKey = function(){
     S.enabledTools.push(currentModalInteg.id);
   }
   saveState();
+  // Also sync to backend (encrypted) if logged in
+  if (authToken) {
+    fetch('/api/user/keys/' + currentModalInteg.id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+      body: JSON.stringify({ key }),
+    }).catch(e => console.warn('Backend key sync failed:', e.message));
+  }
   closeApiModal();
   showToast(currentModalInteg.name + ' API key saved!', 'success');
   renderIntegrations();
@@ -2907,6 +2915,8 @@ async function handleGoogleLogin(response){
     closeAuthModal();
     showToast('Signed in as ' + authUser.name, 'success');
     inspectorLog('success', 'Signed in: ' + authUser.email);
+    // Pull user's data from backend (encrypted keys, settings)
+    await syncFromBackend();
   } catch(e) {
     showToast('Sign in failed: ' + e.message, 'error');
   }
@@ -2922,11 +2932,48 @@ async function refreshAuth(){
     if (data.user) {
       authUser = data.user;
       updateAuthUI();
+      // Sync user data from backend (encrypted API keys, chats, settings)
+      await syncFromBackend();
     } else {
       logout();
     }
   } catch(e) {
     console.warn('Auth refresh failed:', e.message);
+  }
+}
+
+// Pull all per-user data from backend (called on login)
+async function syncFromBackend(){
+  if (!authToken) return;
+  try {
+    // Fetch decrypted API keys
+    const keysRes = await fetch('/api/user/keys/all', {
+      headers: { 'Authorization': 'Bearer ' + authToken }
+    });
+    if (keysRes.ok) {
+      const data = await keysRes.json();
+      // Merge backend keys with local (backend wins as source of truth)
+      S.integKeys = data.keys || {};
+      saveState();
+      renderIntegrations();
+      if (Object.keys(data.keys || {}).length > 0) {
+        showToast('Synced ' + Object.keys(data.keys).length + ' API keys from your account', 'success');
+      }
+    }
+    // Fetch settings
+    const settingsRes = await fetch('/api/user/settings', {
+      headers: { 'Authorization': 'Bearer ' + authToken }
+    });
+    if (settingsRes.ok) {
+      const sData = await settingsRes.json();
+      if (sData.settings && Object.keys(sData.settings).length > 0) {
+        S = { ...S, ...sData.settings };
+        saveState();
+      }
+    }
+    inspectorLog('success', 'Synced data from cloud');
+  } catch(e) {
+    console.warn('Sync from backend failed:', e.message);
   }
 }
 
