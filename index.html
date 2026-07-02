@@ -7,6 +7,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 /* ── RESET & BASE ──────────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -1234,6 +1235,16 @@ body:has(.app.dark){ background:#0A0A0B }
       </select>
     </div>
     <div class="header-right">
+      <div id="authSlot">
+        <button class="hdr-btn" id="loginBtn" onclick="showAuthModal()" title="Sign in with Google" style="display:flex;align-items:center;gap:5px;padding:6px 10px">
+          <svg width="14" height="14" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 19.5-20z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 18.9 12 24 12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.5-5.2l-6.2-5.2C29.1 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.3 5.6l6.2 5.2C40.9 36 44 30.4 44 24c0-1.2-.1-2.4-.4-3.5z"/></svg>
+          <span style="font-size:12px;font-weight:600">Sign in</span>
+        </button>
+        <div id="userSlot" style="display:none;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:20px;cursor:pointer;background:rgba(0,0,0,0.04)" onclick="showUserMenu()">
+          <img id="userAvatar" src="" alt="" style="width:24px;height:24px;border-radius:50%;background:#ccc"/>
+          <span id="userName" style="font-size:12px;font-weight:600"></span>
+        </div>
+      </div>
       <button class="hdr-btn" id="copyBtn" title="Copy session">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="#4B4B4B">
           <rect x="5" y="1" width="8" height="9" rx="1.5"/>
@@ -1412,6 +1423,36 @@ body:has(.app.dark){ background:#0A0A0B }
     </div>
   </div>
 </div>
+
+<!-- Auth Modal -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal" style="max-width:380px;text-align:center;padding:32px 24px">
+    <div style="font-size:42px;margin-bottom:8px">&#128274;</div>
+    <div class="modal-title" style="font-size:20px;margin-bottom:6px">Sign in to Claw Code</div>
+    <div class="modal-desc" style="margin-bottom:24px">Save your chats, API keys, and settings across devices.</div>
+    <div id="googleBtn" style="display:inline-block;margin-bottom:16px"></div>
+    <div style="font-size:11px;color:var(--text-3);margin-top:8px">By signing in, you agree to our basic terms. We only store your email and name.</div>
+    <button class="btn-3d" onclick="closeAuthModal()" style="margin-top:20px;width:100%">Maybe later</button>
+  </div>
+</div>
+
+<!-- User Menu Modal -->
+<div class="modal-overlay" id="userMenuModal">
+  <div class="modal" style="max-width:320px">
+    <div style="display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border)">
+      <img id="menuAvatar" src="" alt="" style="width:48px;height:48px;border-radius:50%;background:#ccc"/>
+      <div style="flex:1;min-width:0">
+        <div id="menuName" style="font-weight:700;font-size:14px"></div>
+        <div id="menuEmail" style="font-size:11.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+      </div>
+    </div>
+    <div style="padding:12px">
+      <button class="btn-3d" onclick="logout()" style="width:100%;color:#EF4444">Sign out</button>
+      <button class="btn-3d" onclick="closeUserMenu()" style="width:100%;margin-top:8px">Cancel</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- Toast -->
 <div class="toast" id="toast"></div>
@@ -2806,11 +2847,124 @@ document.addEventListener('keydown', e => {
 });
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
+
+// ── AUTH (Google OAuth + JWT) ─────────────────────────────────────────────────
+let authUser = null;
+let authToken = localStorage.getItem('cc_jwt') || null;
+const GOOGLE_CLIENT_ID = '395793805906-ra3qk9a038fm2o0n74c1jipfoh88riea.apps.googleusercontent.com';
+
+function showAuthModal(){
+  document.getElementById('authModal').classList.add('open');
+  // Initialize Google button after a tiny delay (script may not be loaded yet)
+  setTimeout(initGoogleButton, 50);
+  setTimeout(initGoogleButton, 300);
+}
+function closeAuthModal(){ document.getElementById('authModal').classList.remove('open') }
+function showUserMenu(){
+  document.getElementById('userMenuModal').classList.add('open');
+}
+function closeUserMenu(){ document.getElementById('userMenuModal').classList.remove('open') }
+
+function initGoogleButton(){
+  if (!window.google || !google.accounts || !google.accounts.id) return;
+  try {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleLogin,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+    const btn = document.getElementById('googleBtn');
+    if (btn) {
+      btn.innerHTML = '';
+      google.accounts.id.renderButton(btn, {
+        theme: 'outline',
+        size: 'large',
+        text: 'signin_with',
+        shape: 'pill',
+        width: 280,
+      });
+    }
+  } catch(e) {
+    console.warn('Google button init failed:', e.message);
+  }
+}
+
+async function handleGoogleLogin(response){
+  if (!response.credential) return;
+  try {
+    const res = await fetch('/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_token: response.credential }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Auth failed');
+    authToken = data.token;
+    authUser = data.user;
+    localStorage.setItem('cc_jwt', authToken);
+    updateAuthUI();
+    closeAuthModal();
+    showToast('Signed in as ' + authUser.name, 'success');
+    inspectorLog('success', 'Signed in: ' + authUser.email);
+  } catch(e) {
+    showToast('Sign in failed: ' + e.message, 'error');
+  }
+}
+
+async function refreshAuth(){
+  if (!authToken) return;
+  try {
+    const res = await fetch('/auth/me', {
+      headers: { 'Authorization': 'Bearer ' + authToken }
+    });
+    const data = await res.json();
+    if (data.user) {
+      authUser = data.user;
+      updateAuthUI();
+    } else {
+      logout();
+    }
+  } catch(e) {
+    console.warn('Auth refresh failed:', e.message);
+  }
+}
+
+function logout(){
+  authToken = null;
+  authUser = null;
+  localStorage.removeItem('cc_jwt');
+  updateAuthUI();
+  closeUserMenu();
+  showToast('Signed out', 'info');
+}
+
+function updateAuthUI(){
+  const loginBtn = document.getElementById('loginBtn');
+  const userSlot = document.getElementById('userSlot');
+  if (authUser) {
+    loginBtn.style.display = 'none';
+    userSlot.style.display = 'flex';
+    document.getElementById('userAvatar').src = authUser.picture || '';
+    document.getElementById('userName').textContent = authUser.name || authUser.email;
+    // Also update menu modal
+    document.getElementById('menuAvatar').src = authUser.picture || '';
+    document.getElementById('menuName').textContent = authUser.name || '';
+    document.getElementById('menuEmail').textContent = authUser.email || '';
+  } else {
+    loginBtn.style.display = 'flex';
+    userSlot.style.display = 'none';
+  }
+}
+
 loadState();
 applyDarkMode();
 populateModelDropdown();
 updateInspector();
 inspectorCheckHealth();
+updateAuthUI();
+refreshAuth();
+setTimeout(initGoogleButton, 500);
 setInterval(inspectorCheckHealth, 30000);  // re-check every 30s
 if (S.messages.length > 0) {
   welcome.style.display = 'none';

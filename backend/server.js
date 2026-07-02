@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const { WebSocketServer } = require('ws');
 const initSqlJs = require('sql.js');
+const { verifyGoogleIdToken, signSession, verifySession, authOptional } = require('./auth');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -641,6 +642,15 @@ async function initDb() {
       updated_at INTEGER DEFAULT (strftime('%s','now')),
       PRIMARY KEY (project_id, name)
     );
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      google_id TEXT UNIQUE,
+      email TEXT UNIQUE,
+      name TEXT,
+      picture TEXT,
+      created_at INTEGER DEFAULT (strftime('%s','now')),
+      last_seen INTEGER DEFAULT (strftime('%s','now'))
+    );
   `);
   saveTimer = setInterval(() => { if (dbDirty) { saveDb(); dbDirty = false; } }, 10_000);
   console.log('[DB] Initialized (sql.js)');
@@ -677,6 +687,8 @@ const server = http.createServer(app);
 
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '10mb' }));
+// Optional auth middleware - populates req.user if JWT is valid, otherwise continues unauthenticated
+app.use(authOptional);
 // Static files with no-cache headers to prevent stale bundles
 app.use(express.static(path.join(__dirname, '..'), {
   setHeaders: (res) => {
@@ -686,6 +698,54 @@ app.use(express.static(path.join(__dirname, '..'), {
     res.setHeader('X-Build-Time', new Date().toISOString());
   }
 }));
+
+// ── AUTH ROUTES ───────────────────────────────────────────────────────────────
+
+// Upsert user from Google ID token, issue our JWT session
+app.post('/auth/google', async (req, res) => {
+  try {
+    const { id_token, credential } = req.body;
+    const token = id_token || credential;
+    if (!token) return res.status(400).json({ error: 'Missing id_token' });
+
+    const profile = await verifyGoogleIdToken(token);
+
+    // Upsert user in DB
+    const userId = 'u_' + profile.google_id;
+    const now = Math.floor(Date.now() / 1000);
+
+    // Try to find existing user
+    const existing = db.exec(`SELECT * FROM users WHERE google_id = '${profile.google_id.replace(/'/g, "''")}'`);
+    let user;
+    if (existing.length > 0 && existing[0].values.length > 0) {
+      const row = existing[0].values[0];
+      user = { id: row[0], google_id: row[1], email: row[2], name: row[3], picture: row[4] };
+      // Update last_seen
+      db.run(`UPDATE users SET last_seen = ${now}, name = '${(profile.name || '').replace(/'/g, "''")}', picture = '${(profile.picture || '').replace(/'/g, "''")}' WHERE google_id = '${profile.google_id.replace(/'/g, "''")}'`);
+    } else {
+      db.run(`INSERT INTO users (id, google_id, email, name, picture, created_at, last_seen)
+              VALUES ('${userId}', '${profile.google_id.replace(/'/g, "''")}',
+                      '${(profile.email || '').replace(/'/g, "''")}',
+                      '${(profile.name || '').replace(/'/g, "''")}',
+                      '${(profile.picture || '').replace(/'/g, "''")}',
+                      ${now}, ${now})`);
+      user = { id: userId, google_id: profile.google_id, email: profile.email, name: profile.name, picture: profile.picture };
+    }
+    dbDirty = true;
+
+    const jwtToken = signSession(user);
+    res.json({ token: jwtToken, user });
+  } catch (e) {
+    console.error('[Auth]', e.message);
+    res.status(401).json({ error: 'Invalid Google token: ' + e.message });
+  }
+});
+
+// Get current user from JWT (or null if not logged in)
+app.get('/auth/me', (req, res) => {
+  if (!req.user) return res.json({ user: null });
+  res.json({ user: req.user });
+});
 
 // ── PROJECTS ──────────────────────────────────────────────────────────────────
 
