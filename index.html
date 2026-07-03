@@ -1227,8 +1227,8 @@ body.theme-dark,
 
 </head>
 <body class="theme-dark">
-<!-- ── AUTH GATE (shown until Google sign-in completes) ────────────────── -->
-<div id="authGate" style="position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px">
+<!-- Auth gate removed — sign-in is now OPTIONAL via the user menu -->
+<div id="authGate" style="display:none">
   <div style="text-align:center;max-width:420px;width:100%">
     <!-- Logo emblem top -->
     <div id="gateLogo" style="width:120px;height:120px;border-radius:50%;overflow:hidden;margin:0 auto 28px;box-shadow:0 0 50px rgba(234,88,12,0.2);border:2px solid rgba(255,255,255,0.06)">
@@ -3314,24 +3314,13 @@ function updateAuthUI(){
   // If we have a logged-in user, hide the gate and reveal the app
   if (authUser) {
     if (gate) {
-      gate.classList.add('hidden');
-      setTimeout(() => { gate.style.display = 'none'; }, 500);
+      gate.style.display = 'none';
     }
-    if (app) {
-      app.classList.remove('hiding');
-      app.classList.add('revealed');
-    }
-    document.body.classList.remove('gate-active');
     populateModelDropdown();
     updateInspector();
   } else {
-    // User signed out — show the gate again
-    if (gate) gate.style.display = 'flex';
-    if (app) {
-      app.classList.remove('revealed');
-      app.classList.add('hiding');
-    }
-    document.body.classList.add('gate-active');
+    // Sign-in is optional — never show the gate again. Just update header UI.
+    if (gate) gate.style.display = 'none';
   }
   if (authUser) {
     loginBtn.style.display = 'none';
@@ -3348,18 +3337,14 @@ function updateAuthUI(){
   }
 }
 
-// Hard auth gate: hide everything until signed in
-document.body.classList.add('gate-active');
-const _gateEl = document.getElementById('authGate');
-const _appEl = document.getElementById('app');
-if (_appEl) { _appEl.style.visibility = 'hidden'; }
+// Auth gate removed — app is fully accessible without sign-in.
+// Sign-in is OPTIONAL and accessed via the user menu.
 
 loadState();
 applyDarkMode();
 populateModelDropdown();
 updateInspector();
 inspectorCheckHealth();
-updateAuthUI();
 refreshAuth();
 
 // Render Google button INSIDE the gate (not the header modal)
