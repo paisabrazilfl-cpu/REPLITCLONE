@@ -3169,20 +3169,9 @@ function initGoogleGate(){
       auto_select: false,
       cancel_on_tap_outside: false,
     });
-    const btn = document.getElementById('gateGoogleBtn');
-    if (btn) {
-      btn.innerHTML = '';
-      const fb = document.getElementById('gateGoogleFallback');
-      if (fb) fb.style.display = 'none';
-      google.accounts.id.renderButton(btn, {
-        theme: 'filled_black',
-        size: 'large',
-        text: 'signin_with',
-        shape: 'pill',
-        width: 320,
-      });
-    }
-  } catch(e) { console.warn('Gate button init failed:', e.message); }
+    // GIS iframe button removed — fallback <a id="gateGoogleFallback"> is always shown
+    console.log('Google Identity Services initialized');
+  } catch (e) { console.warn('Gate init:', e.message); }
 }
 
 function initGoogleButton(){
