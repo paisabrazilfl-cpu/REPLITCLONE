@@ -1451,12 +1451,15 @@ body.theme-dark,
   <div class="sidebar-footer">
     <div class="sidebar-status">
       <div class="status-dot"></div>
-      Ready
+      <span id="sidebarUserBadge">Guest</span>
     </div>
-    <button class="theme-btn" id="themeBtn">
-      <svg viewBox="0 0 16 16" id="themeIcon"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 12.5a5.5 5.5 0 110-11 5.5 5.5 0 010 11zM8 4a4 4 0 100 8 4 4 0 000-8z"/></svg>
-      <span id="themeLabel">Dark</span>
-    </button>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="theme-btn" id="themeBtn" title="Toggle theme" style="background:transparent;border:none;cursor:pointer;color:var(--text-2);font-size:11.5px;display:flex;align-items:center;gap:5px;padding:6px 8px;border-radius:6px">
+        <svg viewBox="0 0 16 16" id="themeIcon" style="width:13px;height:13px;fill:currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 12.5a5.5 5.5 0 110-11 5.5 5.5 0 010 11zM8 4a4 4 0 100 8 4 4 0 000-8z"/></svg>
+        <span id="themeLabel">Dark</span>
+      </button>
+      <a id="signInMini" href="https://accounts.google.com/o/oauth2/v2/auth?client_id=395793805906-ra3qk9a038fm2o0n74c1jipfoh88riea.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Freplit-clone-07jy.onrender.com%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=openid+email+profile&prompt=select_account" target="_self" title="Sign in to sync your keys across devices" style="font-size:11px;color:var(--text-3);text-decoration:none;padding:6px 8px;border-radius:6px;transition:color 0.1s;cursor:pointer" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-3)'">Sign in</a>
+    </div>
   </div>
 </div>
 <!-- Inspector (desktop only — right-side info panel) -->
