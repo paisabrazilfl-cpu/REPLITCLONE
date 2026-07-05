@@ -1434,6 +1434,10 @@ body.theme-dark,
       <svg viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 12.5a5.5 5.5 0 110-11 5.5 5.5 0 010 11z"/><circle cx="8" cy="8" r="2"/></svg>
       Agents
     </button>
+<button class="nav-tab" data-panel="hnotes">
+      <svg viewBox="0 0 16 16"><path d="M3 1h7l3 3v11H3V1zm6 1v3h3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      Notes
+    </button>
     <button class="nav-tab" data-panel="lab">
       <svg viewBox="0 0 16 16"><path d="M2 1h12v3H2zm0 4h12v8H2zm2 2v4h2V7zm4 0v4h2V7z"/></svg>
       Lab
@@ -2348,7 +2352,43 @@ function renderSidebarPanel(panel){
   else if (panel === 'mycode')    renderMyCode();
   else if (panel === 'agents')    renderAgents();
   else if (panel === 'lab')       renderLab();
+  else if (panel === 'hnotes')    renderHNotes();
   else if (panel === 'settings')  renderSettings();
+}
+
+// ── HANDOFF NOTES PANEL ───────────────────────────────────────────────────────
+function renderHNotes(){
+  const head = document.createElement('div');
+  head.style.cssText = 'padding:16px 16px 8px;border-bottom:1px solid var(--border)';
+  head.innerHTML =
+    '<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px">Project Handoff</div>' +
+    '<div style="font-size:11.5px;color:var(--text-3);line-height:1.4">Everything that was built, how it works, and what\'s left.</div>';
+  sidebarContent.appendChild(head);
+
+  const body = document.createElement('div');
+  body.style.cssText = 'flex:1;overflow-y:auto;padding:16px;font-size:12px;color:var(--text-2);line-height:1.6';
+
+  const sections = [
+    {title: '🏗️ What is Lizzy?', body: 'AI coding assistant web app. Chat with 22 models (NVIDIA NIM, Kimi, OpenAI, OpenRouter, Gemini, Groq, DeepSeek). Code editor. Image/video hooks. Encrypted per-user API key vault. Browser sandbox Lab. Claude Code–style dark UI.'},
+    {title: '🌐 Live URL', body: '<a href="https://replit-clone-07jy.onrender.com" target="_blank" style="color:var(--accent)">https://replit-clone-07jy.onrender.com</a>'},
+    {title: '📁 Stack', body: '<div>• <b>Frontend:</b> Vanilla JS, single-file index.html (~3400 lines)</div><div>• <b>Backend:</b> Node.js + Express + sql.js (pure-JS SQLite)</div><div>• <b>Auth:</b> Google OAuth + JWT (7-day TTL) — optional</div><div>• <b>Encryption:</b> AES-256-GCM with random IV (per-user vault)</div><div>• <b>Hosting:</b> Render (auto-deploy from GitHub)</div>'},
+    {title: '🔑 Current Env Vars (in Render dashboard)', body: '<div style="font-family:var(--font-mono);font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px">GEMINI_API_KEY, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET, MASTER_KEY, NODE_ENV, PORT</div><div style="margin-top:6px;font-size:11.5px;color:var(--text-3)">All other AI provider keys (NVIDIA, OpenAI, OpenRouter, Kimi, etc.) were lost in a Render PUT-wipe earlier. Restore via encrypted vault.</div>'},
+    {title: '🛡️ Optional Sign-In', body: 'Click "Sign in" in sidebar footer → Google OAuth → encrypted vault access.<br><b>Setup:</b> Add the callback URL to your Google OAuth client\'s Authorized redirect URIs (see HANDOFF.md).'},
+    {title: '🎯 How To Restore Lost AI Keys', body: '<div>1. Sign in (sidebar footer link) — accounts persist across sessions</div><div>2. Open <b>Integrations</b> tab in sidebar</div><div>3. Click <b>Configure Key</b> on NVIDIA NIM / OpenAI / Kimi etc.</div><div>4. Paste your API key → Save</div><div style="margin-top:6px">Keys are encrypted with AES-256-GCM and stored in your account. They sync across devices on sign-in.</div>'},
+    {title: '⚠️ Known Limitations', body: '<div>• ~35 lost AI provider keys — not in git, not anywhere. User must re-add via vault or provide as new env vars.</div><div>• Cron jobs UI exists but no real scheduler wired</div><div>• Image/video endpoints not tested end-to-end</div><div>• No automated test suite (manual Playwright only)</div>'},
+    {title: '🧠 Lessons (Don\'t Repeat)', body: '<div>• Render PUT /env-vars REPLACES entire list — never use raw PUT, always use safe-merge script</div><div>• Never block entire app behind broken auth — auth should be optional</div><div>• Multi-tenant over-engineering is worse than "just works for me"</div><div>• Self-reflect after every "done" claim — I missed bugs twice this session</div><div>• <b>Never commit secrets to git</b> — GitHub push protection blocks it</div>'},
+    {title: '📦 File Map', body: '<div style="font-family:var(--font-mono);font-size:11px;line-height:1.6">index.html — single-file SPA<br>backend/server.js — Express + chat router<br>backend/auth.js — Google OAuth verify + JWT<br>backend/crypto.js — AES-256-GCM<br>backend/lab.js — Lab panel renderer<br>backend/package.json — npm deps<br>gecko-mascot.png — brand mascot<br>HANDOFF.md — full handoff doc</div>'},
+    {title: '🚀 Branch Convention', body: '<div>All work uses <code style="background:var(--bg);padding:1px 4px;border-radius:3px">methodical-notes/YYYY-MM-DD-description</code> branches, then merged to main. Never push directly without a branch.</div>'},
+  ];
+
+  body.innerHTML = sections.map(s =>
+    '<div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border-soft)">' +
+      '<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px">' + s.title + '</div>' +
+      '<div style="color:var(--text-2)">' + s.body + '</div>' +
+    '</div>'
+  ).join('');
+
+  sidebarContent.appendChild(body);
 }
 
 // ── INTEGRATIONS PANEL ────────────────────────────────────────────────────────
