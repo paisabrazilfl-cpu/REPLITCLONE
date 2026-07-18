@@ -695,7 +695,7 @@ async function initDb() {
       PRIMARY KEY (user_id, key)
     );
   `);
-  saveTimer = setInterval(() => { if (dbDirty) { saveDb(); dbDirty = false; } }, 10_000);
+  saveTimer = setInterval(() => { if (dbDirty) { saveDb(); dbDirty = false; } }, 10000);
   console.log('[DB] Initialized (sql.js)');
 }
 
